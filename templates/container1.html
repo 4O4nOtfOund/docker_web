@@ -1,0 +1,373 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+	{% block title %}
+	<title>容器管理 - 国药在线Docker管理系统</title>
+	{% endblock %}
+
+	{% block breadcrumbs %}
+	<ul class="breadcrumb">
+		<li>
+			<i class="icon-home home-icon"></i>
+			<a href="{% url 'index' %}">首页</a>
+		</li>
+
+        <li class="active">容器列表</li>
+
+	</ul><!-- .breadcrumb -->
+	{% endblock %}
+
+	{% block page-content %}
+	<div class="page-content">
+        <div id="modal-wizard" class="modal" style="display: block"><!-- ADD CONTAINER MODAL BEGIN -->
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header" data-target="#modal-step-contents">
+                        <h4>添加宿主机</h4>
+                        <span style="display: none" id="addresult">{{ result }}</span>
+                    </div>
+
+                    <div class="modal-body step-content" id="modal-step-contents">
+                        <div class="step-pane active" id="modal-step1">
+                            <div class="col-sm-12">
+                                <form class="form-horizontal" role="form">
+                                    <div class="form-group has-info">
+                                        <label for="inputInfo" class="col-xs-12 col-sm-3 control-label no-padding-right">Name:</label>
+
+                                        <div class="col-xs-12 col-sm-5">
+                                            <span class="block input-icon input-icon-right">
+                                                <input type="text" id="inputInfo" class="width-100" required>
+                                            </span>
+                                        </div>
+                                        <div class="help-block col-xs-12 col-sm-reset inline"> 容器名称 </div>
+                                    </div>
+                                    <span class="space-2"></span>
+                                    <div class="form-group has-info">
+                                        <label for="inputInfo" class="col-xs-12 col-sm-3 control-label no-padding-right">Host:</label>
+
+                                        <div class="col-xs-12 col-sm-5">
+                                            <span class="block input-icon input-icon-right">
+                                                <select class="form-control" id="form-field-select-1" onchange="getimage(this.id)" required>
+                                                    <option value="">&nbsp;</option>
+                                                    {% for each in add_info %}
+                                                    <option value="{{ each.ip }}">{{ each.ip }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </span>
+                                        </div>
+                                        <div class="help-block col-xs-12 col-sm-reset inline"> 创建容器的宿主机 </div>
+                                    </div>
+                                    <span class="space-2"></span>
+                                    <div class="form-group has-info">
+                                        <label for="inputInfo" class="col-xs-12 col-sm-3 control-label no-padding-right">Image:</label>
+
+                                        <div class="col-xs-12 col-sm-5">
+                                            <span class="block input-icon input-icon-right">
+                                                <select class="form-control" id="form-field-select-2" required>
+                                                    <option value="">&nbsp;</option>
+                                                </select>
+                                            </span>
+                                        </div>
+                                        <div class="help-block col-xs-12 col-sm-reset inline"> 创建容器的镜像 </div>
+                                    </div>
+                                    <span class="space-2"></span>
+                                    <div class="form-group has-info">
+                                        <label for="inputInfo" class="col-xs-12 col-sm-3 control-label no-padding-right">HostName:</label>
+
+                                        <div class="col-xs-12 col-sm-5">
+                                            <span class="block input-icon input-icon-right">
+                                                <input type="text" id="inputInfo" class="width-100">
+                                            </span>
+                                        </div>
+                                        <div class="help-block col-xs-12 col-sm-reset inline">容器中的 hostname</div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer wizard-actions">
+                        <button class="btn btn-success btn-sm pull-right" type="submit" id="addcontainer" disabled>
+                            <i class="icon-ok"></i>
+                            添加
+                        </button>
+
+                        <button class="btn btn-danger btn-sm pull-left" data-dismiss="modal">
+                            <i class="icon-remove"></i>
+                            取消
+                        </button>
+                    </div>
+                </div>
+            </div>
+    </div><!-- ADD CONTAINER MODAL ENDS -->
+        <div class="row">
+            <div class="alert alert-success" style="display: none">
+                <button type="button" class="close" data-dismiss="alert">
+                    <i class="icon-remove"></i>
+                </button>
+
+                <strong>
+                    <i class="icon-ok"></i>
+                    DONE!
+                </strong>
+                操作成功。
+                <br>
+            </div>
+            <div class="alert alert-danger" style="display: none">
+                <button type="button" class="close" data-dismiss="alert">
+                    <i class="icon-remove"></i>
+                </button>
+                <strong>
+                    <i class="icon-remove"></i>
+                    ERROR!
+                </strong>
+                操作失败。
+                <br>
+            </div>
+            <div class="col-xs-12">
+                <!-- PAGE CONTENT BEGINS -->
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="table-header">
+                            容器列表
+                        </div>
+
+                        <div class="table-responsive">
+                            <div id="sample-table-2_wrapper" class="dataTables_wrapper" role="grid">
+                                <div id="sample-table-2_wrapper" class="dataTables_wrapper" role="grid">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <button class="btn btn-sm btn-success">
+                                                    <i class="icon-pencil"></i>
+                                                    添加
+                                            </button>
+                                            <button class="btn btn-sm btn-danger">
+                                                    <i class="icon-bolt bigger-110"></i>
+                                                    删除
+                                            </button>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="dataTables_filter" id="sample-table-2_filter">
+                                                <label>Search:
+                                                    <input type="text" id="ContainerSearch" aria-controls="sample-table-2">
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                <table id="sample-table-2" class="table table-striped table-bordered table-hover dataTable" aria-describedby="sample-table-2_info">
+                                <thead>
+                                    <tr>
+                                        <th class="center">
+                                            <label>
+                                                <input type="checkbox" id="chkAll" class="ace" />
+                                                <span class="lbl"></span>
+                                            </label>
+                                        </th>
+                                        <th>ID</th>
+                                        <th>名称</th>
+                                        <th>镜像</th>
+                                        <th>宿主机</th>
+                                        <th>创建时间</th>
+                                        <th>状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="ContainerBody">
+    {#								样本数据开始#}
+                                    <tr>
+                                        <td class="center sorting_1">
+                                            <label>
+                                                <input type="checkbox" class="ace" />
+                                                <span class="lbl"></span>
+                                            </label>
+                                        </td>
+
+                                        <td>
+                                            <a href="#">4O8F9UY7</a>
+                                        </td>
+                                        <td>ontainer01</td>
+                                        <td class="hidden-480">Nginx</td>
+                                        <td>192.168.2.100</td>
+                                        <td>Feb 12</td>
+                                        <td>
+                                            <span class="label label-sm label-warning">Expiring</span>
+    {#                                        <span class="label label-sm label-success">Registered</span>#}
+    {#                                        <span class="label label-sm label-inverse arrowed-in">Flagged</span>#}
+    {#                                        <span class="label label-sm label-info arrowed arrowed-righ">Sold</span>#}
+                                        </td>
+                                        <td>
+                                            <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
+                                                <a class="blue" href="#">
+                                                    <i class="icon-play bigger-130"></i>
+                                                </a>
+                                                <a class="red" href="#" title="aaa">
+                                                    <i class="icon-stop bigger-130" ></i>
+                                                </a>
+
+                                                <a class="green" href="#">
+                                                    <i class="icon-refresh bigger-130"></i>
+                                                </a>
+
+                                                <a class="red" href="#">
+                                                    <i class="icon-trash bigger-130"></i>
+                                                </a>
+                                            </div>
+
+                                            <div class="visible-xs visible-sm hidden-md hidden-lg">
+                                                <div class="inline position-relative">
+                                                    <button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown">
+                                                        <i class="icon-caret-down icon-only bigger-120"></i>
+                                                    </button>
+
+                                                    <ul class="dropdown-menu dropdown-only-icon dropdown-yellow pull-right dropdown-caret dropdown-close">
+                                                        <li>
+                                                            <a href="#" class="tooltip-info" data-rel="tooltip" title="View">
+                                                                <span class="blue">
+                                                                    <i class="icon-zoom-in bigger-120"></i>
+                                                                </span>
+                                                            </a>
+                                                        </li>
+
+                                                        <li>
+                                                            <a href="#" class="tooltip-success" data-rel="tooltip" title="Edit">
+                                                                <span class="green">
+                                                                    <i class="icon-edit bigger-120"></i>
+                                                                </span>
+                                                            </a>
+                                                        </li>
+
+                                                        <li>
+                                                            <a href="#" class="tooltip-error" data-rel="tooltip" title="Delete">
+                                                                <span class="red">
+                                                                    <i class="icon-trash bigger-120"></i>
+                                                                </span>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+    {#                                样本数据结束#}
+
+                                    {% for each in all_info %}
+                                    <tr>
+                                        <td class="center sorting_1">
+                                            <label>
+                                                <input type="checkbox" class="ace" />
+                                                <span class="lbl"></span>
+                                            </label>
+                                        </td>
+
+                                        <td>
+                                            <a href="#">{{ each.container_id | truncatechars:"15" }}</a>
+                                        </td>
+                                        <td>{{ each.name }}</td>
+                                        <td>
+                                            <a href="{% url 'container_to_image' each.imageid %}">{{ each.imagename }}</a>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'specify_host' each.host %}">{{ each.host }}</a>
+                                        </td>
+                                        <td>{{ each.create_time }}</td>
+                                        <td>
+                                            {% if each.state == 'running' %}
+                                            <span class="label label-sm label-success">{{ each.state }}</span>
+                                            {% else %}
+                                            <span class="label label-sm label-danger">{{ each.state }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
+                                                {% ifnotequal each.state 'running' %}
+                                                <a class="green" href="#" title="启动容器">
+                                                    <i class="icon-play bigger-130" todo="start" host={{ each.host }} container_id={{ each.container_id }}></i>
+                                                </a>
+                                                {% else %}
+                                                <a class="red" href="#" title="停止容器">
+                                                    <i class="icon-stop bigger-130" todo="stop" host={{ each.host }} container_id={{ each.container_id }}></i>
+                                                </a>
+                                                {% endifnotequal %}
+
+                                                <a class="blue" href="#" title="重启容器">
+                                                    <i class="icon-refresh bigger-130" todo="restart" host={{ each.host }} container_id={{ each.container_id }}></i>
+                                                </a>
+
+                                                <a class="blue" href="#" title="查看进程">
+                                                    <i class="icon-bar-chart bigger-130" todo="top" host={{ each.host }} container_id={{ each.container_id }}></i>
+                                                </a>
+
+                                                <div class="btn-group">
+                                                    <button data-toggle="dropdown" class="btn btn-minier btn-danger dropdown-toggle">
+                                                        Danger
+                                                        <i class="icon-angle-down icon-on-right"></i>
+                                                    </button>
+
+                                                    <ul class="dropdown-menu dropdown-danger">
+                                                        <li>
+                                                            <a href="#" todo="delete" host={{ each.host }} container_id={{ each.container_id }}>删除容器</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+
+                                            <div class="visible-xs visible-sm hidden-md hidden-lg">
+                                                <div class="inline position-relative">
+                                                    <button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown">
+                                                        <i class="icon-caret-down icon-only bigger-120"></i>
+                                                    </button>
+
+                                                    <ul class="dropdown-menu dropdown-only-icon dropdown-yellow pull-right dropdown-caret dropdown-close">
+                                                        <li>
+                                                            <a href="#" class="tooltip-info" data-rel="tooltip" title="View">
+                                                                <span class="blue">
+                                                                    <i class="icon-zoom-in bigger-120"></i>
+                                                                </span>
+                                                            </a>
+                                                        </li>
+
+                                                        <li>
+                                                            <a href="#" class="tooltip-success" data-rel="tooltip" title="Edit">
+                                                                <span class="green">
+                                                                    <i class="icon-edit bigger-120"></i>
+                                                                </span>
+                                                            </a>
+                                                        </li>
+
+                                                        <li>
+                                                            <a href="#" class="tooltip-error" data-rel="tooltip" title="Delete">
+                                                                <span class="red">
+                                                                    <i class="icon-trash bigger-120"></i>
+                                                                </span>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- PAGE CONTENT ENDS -->
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+        </div><!-- /.page-content -->
+        {% endblock %}
+
+       {% block custom_js %}
+		<script src={% static "js/bootstrap.min.js" %}></script>
+
+
+		<!-- page specific plugin scripts -->
+
+		<!-- ace scripts -->
+		<script src={% static "js/myjs.js" %}></script>
+
+		<!-- inline scripts related to this page -->
+        {% endblock %}
