@@ -270,24 +270,21 @@
 		</div><!-- /.main-container -->
 		<!-- basic scripts -->
 
-		<!--[if !IE]> -->
-		<script type="text/javascript">
-			window.jQuery || document.write("<script src={% static 'js/jquery-2.0.3.min.js' %}>"+"<"+"script>");
-		</script>
-		<!-- <![endif]-->
+
+        <script src={% static "js/jquery-2.0.3.min.js" %}></script>
 
 		<script src={% static "js/bootstrap.min.js" %}></script>
 
 		<!-- page specific plugin scripts -->
-{#		<script src={% static "js/jquery-ui-1.10.3.custom.min.js" %}></script>#}
+		<script src={% static "js/jquery-ui-1.10.3.custom.min.js" %}></script>
         <script src={% static "js/jquery-2.0.3.min.js" %}></script>
-        <script src={% static "js/jquery-ui-1.10.1.custom.min.js" %}></script>
 		<script src={% static "js/jquery.cookie.min.js" %}></script>
 		<script src={% static "js/ace.min.js" %}></script>
 
     {% block custom_js %}
     {% endblock %}
-        <script>
+    <script>
+        // 检测添加宿主机的状态
         $("#chkhost").click(function(e){
             console.log('chkhost');
             var ip=$("#ip").val();
@@ -303,22 +300,22 @@
                     console.log('version');
                     if (version=='error'){
                         $("#chkhost").text(version);
-                        $("#addbtn").attr('disabled', true);
+                        $("#addhost").attr('disabled', true);
                     }
                     else{
                         $("#chkhost").text(version);
-                        $("#addbtn").attr('disabled', false);
+                        $("#addhost").attr('disabled', false);
                     }
                 }
             })
         })
 
-
-        $("#addbtn").click(function () {
+        // 添加宿主机
+        $("#addhost").click(function () {
             $("#hostform").submit();
         })
 
-
+        //判断添加宿主机的结果，成功则返回宿主机列表。
         $(function () {
             if ($("#addresult").text()=='success'){
                 $(".alert-success").show();
@@ -332,6 +329,7 @@
             }
         })
 
+        // 启动、停止、重启容器
         $(function () {
             $(".action-buttons a i").click(function () {
                 var todo=$(this).attr('todo');
@@ -388,6 +386,7 @@
             })
         })
 
+        // 删除容器
         $(function () {
             $(".btn-group ul li a").click(function () {
                 console.log($(this).text());
@@ -413,8 +412,107 @@
             })
         })
 
+        // 创建容器选择宿主机后获取宿主机包含的镜像
+        function getimage(e) {
+            var selected = $("#form-field-select-1").val();
+            console.log(selected);
+            $.ajax({
+                url: '{% url 'containerimage' %}',
+                type: 'post',
+                data: {'selected': selected},
+                headers:{ "X-CSRFtoken":$.cookie("csrftoken")},
+                success: function (image) {
+                    $("#form-field-select-2 option").remove('option[value!=""]');
+                    for (var i=0,l=image.length; i<l; i++){
+                        var new_option = '<option value="'+image[i]+'">'+image[i]+'</option>';
+                        console.log(image[i])
+                        $("#form-field-select-2").append(new_option)
+                    }
+                }
+            })
+        }
 
-        </script>
+        // 创建容器的分步对话框
+        $(function () {
+            $(".btn-next").click(function () {
+                step_status = $(".wizard-steps li[data-target='#modal-step4']").attr('class');
+                if (step_status == 'active') {
+                    var flag = $("#flag").text();
+                    if(flag==1) {
+                        var name = $("#inputInfo11").val();
+                        var image = $("#form-field-select-1").val();
+                        var host = $("#form-field-select-2").val();
+                        var hostname = $("#inputInfo12").val();
+                        var address = $("#inputInfo21").val();
+                        var gateway = $("#inputInfo22").val();
+                        var netmask = $("#inputInfo23").val();
+                        var dns = $("#inputInfo24").val();
+                        var other = $("#form-field-1").val();
+                        var after = $("#form-field-2").val();
+                        var info_left = {
+                            'name': name, 'image': image,
+                            'host': host, 'hostname': hostname,
+                            'address': address, 'gateway': gateway,
+                            'netmask': netmask, 'dns': dns
+                        };
+                        var info_right = {'other': other, 'after': after};
+
+                        for (var i in info_left) {
+                            var info = "<li>" + i + ": " + info_left[i] + "</li>"
+                            $("#all-info-left ul").append(info)
+                        }
+
+                        for (var j in info_right) {
+                            var info = "<li>" + j + ": " + info_right[j] + "</li>"
+                            $("#all-info-right ul").append(info)
+                        }
+                        $("#flag").text(0);
+                    }
+                    $(".btn-next").hide();
+                    $(".btn-submit").show();
+                }
+            })
+
+            $(".btn-submit").click(function () {
+                console.log('submit');
+                var name = $("#inputInfo11").val();
+                var host = $("#form-field-select-1").val();
+                var image = $("#form-field-select-2").val();
+                var hostname = $("#inputInfo12").val();
+                var address = $("#inputInfo21").val();
+                var gateway = $("#inputInfo22").val();
+                var netmask = $("#inputInfo23").val();
+                var dns = $("#inputInfo24").val();
+                var other = $("#form-field-1").val();
+                var after = $("#form-field-2").val();
+                var info = {'name': name, 'host': host,
+                            'image': image, 'hostname': hostname,
+                            'address': address, 'gateway': gateway,
+                            'netmask': netmask, 'dns': dns,
+                            'other': other, 'after': after
+                            };
+                $("#modal-wizard").hide();
+                $(".modal-backdrop").hide();
+                $(".widget-box-overlay").show();
+                $.ajax({
+                    url: '{% url 'addcontainer' %}',
+                    type: 'post',
+                    data: info,
+                    dataType: 'application/json',
+                    headers: {'X-CSRFtoken': $.cookie('csrftoken')},
+                })
+            })
+
+            $(".btn-prev").click(function () {
+                $("#all-info-left ul li").remove('li');
+                $("#all-info-right ul li").remove('li');
+                $(".wizard-steps li[data-target='#modal-step4']").attr('class', '');
+                $("#flag").text(1);
+                $(".btn-next").show();
+                $(".btn-submit").hide();
+            })
+        })
+    </script>
 </body>
 </html>
 

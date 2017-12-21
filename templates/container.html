@@ -18,80 +18,6 @@
 
 	{% block page-content %}
 	<div class="page-content">
-        <div id="modal-wizard" class="modal" style="display: block"><!-- ADD CONTAINER MODAL BEGIN -->
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header" data-target="#modal-step-contents">
-                        <h4>添加宿主机</h4>
-                        <span style="display: none" id="addresult">{{ result }}</span>
-                    </div>
-
-                    <div class="modal-body step-content" id="modal-step-contents">
-                        <div class="step-pane active" id="modal-step1">
-                            <div class="col-sm-12">
-                                <form class="form-horizontal" role="form">
-                                    <div class="form-group has-info">
-                                        <label for="inputInfo" class="col-xs-12 col-sm-3 control-label no-padding-right">Name:</label>
-
-                                        <div class="col-xs-12 col-sm-5">
-                                            <span class="block input-icon input-icon-right">
-                                                <input type="text" id="inputInfo" class="width-100">
-                                            </span>
-                                        </div>
-                                        <div class="help-block col-xs-12 col-sm-reset inline"> 容器名称 </div>
-                                    </div>
-                                    <span class="space-2"></span>
-                                    <div class="form-group has-info">
-                                        <label for="inputInfo" class="col-xs-12 col-sm-3 control-label no-padding-right">Image:</label>
-
-                                        <div class="col-xs-12 col-sm-5">
-                                            <span class="block input-icon input-icon-right">
-                                                <input type="text" id="inputInfo" class="width-100">
-                                            </span>
-                                        </div>
-                                        <div class="help-block col-xs-12 col-sm-reset inline"> 创建容器的镜像 </div>
-                                    </div>
-                                    <span class="space-2"></span>
-                                    <div class="form-group has-info">
-                                        <label for="inputInfo" class="col-xs-12 col-sm-3 control-label no-padding-right">Host:</label>
-
-                                        <div class="col-xs-12 col-sm-5">
-                                            <span class="block input-icon input-icon-right">
-                                                <input type="text" id="inputInfo" class="width-100">
-                                            </span>
-                                        </div>
-                                        <div class="help-block col-xs-12 col-sm-reset inline"> 创建容器的宿主机 </div>
-                                    </div>
-                                    <span class="space-2"></span>
-                                    <div class="form-group has-info">
-                                        <label for="inputInfo" class="col-xs-12 col-sm-3 control-label no-padding-right">HostName:</label>
-
-                                        <div class="col-xs-12 col-sm-5">
-                                            <span class="block input-icon input-icon-right">
-                                                <input type="text" id="inputInfo" class="width-100">
-                                            </span>
-                                        </div>
-                                        <div class="help-block col-xs-12 col-sm-reset inline">容器中的 hostname</div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="modal-footer wizard-actions">
-                        <button class="btn btn-success btn-sm pull-right" type="submit" id="addbtn" disabled>
-                            <i class="icon-ok"></i>
-                            添加
-                        </button>
-
-                        <button class="btn btn-danger btn-sm pull-left" data-dismiss="modal">
-                            <i class="icon-remove"></i>
-                            取消
-                        </button>
-                    </div>
-                </div>
-            </div>
-    </div><!-- ADD CONTAINER MODAL ENDS -->
         <div class="row">
             <div class="alert alert-success" style="display: none">
                 <button type="button" class="close" data-dismiss="alert">
@@ -129,7 +55,7 @@
                                 <div id="sample-table-2_wrapper" class="dataTables_wrapper" role="grid">
                                     <div class="row">
                                         <div class="col-sm-6">
-                                            <button class="btn btn-sm btn-success">
+                                            <button class="btn btn-sm btn-success" href="#modal-wizard" data-toggle="modal">
                                                     <i class="icon-pencil"></i>
                                                     添加
                                             </button>
@@ -351,6 +277,186 @@
             </div><!-- /.col -->
         </div><!-- /.row -->
         </div><!-- /.page-content -->
+        <div id="modal-wizard" class="modal"><!-- ADD CONTAINER MODAL BEGIN -->
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header" data-target="#modal-step-contents">
+                        <ul class="wizard-steps">
+                            <li data-target="#modal-step1" class="active">
+                                <span class="step">1</span>
+                                <span class="title">基本信息</span>
+                            </li>
+                            <li data-target="#modal-step2" class>
+                                <span class="step">2</span>
+                                <span class="title">网络配置</span>
+                            </li>
+                            <li data-target="#modal-step3" class>
+                                <span class="step">3</span>
+                                <span class="title">其他配置</span>
+                            </li>
+                            <li data-target="#modal-step4" class>
+                                <span class="step">4</span>
+                                <span class="title">概览</span>
+                            </li>
+                        </ul>
+{#                        <h4>添加宿主机</h4>#}
+                        <span style="display: none" id="addcontainerresult">{{ addcontainerresult }}</span>
+                    </div>
+
+                    <div class="modal-body step-content" id="modal-step-contents">
+                        <div class="step-pane active" id="modal-step1">
+                            <div class="col-sm-12">
+                                <form class="form-horizontal" role="form">
+                                    <div class="form-group has-info">
+                                        <label for="inputInfo11" class="col-xs-12 col-sm-3 control-label no-padding-right">Name:</label>
+
+                                        <div class="col-xs-12 col-sm-5">
+                                            <span class="block input-icon input-icon-right">
+                                                <input type="text" id="inputInfo11" class="width-100" required>
+                                            </span>
+                                        </div>
+                                        <div class="help-block col-xs-12 col-sm-reset inline"> 容器名称 </div>
+                                    </div>
+                                    <span class="space-2"></span>
+                                    <div class="form-group has-info">
+                                        <label class="col-xs-12 col-sm-3 control-label no-padding-right">Host:</label>
+
+                                        <div class="col-xs-12 col-sm-5">
+                                            <span class="block input-icon input-icon-right">
+                                                <select class="form-control" id="form-field-select-1" onchange="getimage(this.id)" required>
+                                                    <option value="">&nbsp;</option>
+                                                    {% for each in add_info %}
+                                                    <option value="{{ each.ip }}">{{ each.ip }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </span>
+                                        </div>
+                                        <div class="help-block col-xs-12 col-sm-reset inline"> 创建容器的宿主机 </div>
+                                    </div>
+                                    <span class="space-2"></span>
+                                    <div class="form-group has-info">
+                                        <label class="col-xs-12 col-sm-3 control-label no-padding-right">Image:</label>
+
+                                        <div class="col-xs-12 col-sm-5">
+                                            <span class="block input-icon input-icon-right">
+                                                <select class="form-control" id="form-field-select-2" required>
+                                                    <option value="">&nbsp;</option>
+                                                </select>
+                                            </span>
+                                        </div>
+                                        <div class="help-block col-xs-12 col-sm-reset inline"> 创建容器的镜像 </div>
+                                    </div>
+                                    <span class="space-2"></span>
+                                    <div class="form-group has-info">
+                                        <label for="inputInfo12" class="col-xs-12 col-sm-3 control-label no-padding-right">HostName:</label>
+
+                                        <div class="col-xs-12 col-sm-5">
+                                            <span class="block input-icon input-icon-right">
+                                                <input type="text" id="inputInfo12" class="width-100">
+                                            </span>
+                                        </div>
+                                        <div class="help-block col-xs-12 col-sm-reset inline">容器的 hostname</div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="step-pane" id="modal-step2">
+                            <div class="col-sm-12">
+                                <form class="form-horizontal" role="form">
+                                    <div class="form-group has-info">
+                                        <label for="inputInfo21" class="col-xs-12 col-sm-3 control-label no-padding-right">Address:</label>
+
+                                        <div class="col-xs-12 col-sm-5">
+                                            <span class="block input-icon input-icon-right">
+                                                <input type="text" id="inputInfo21" class="width-100" required>
+                                            </span>
+                                        </div>
+                                        <div class="help-block col-xs-12 col-sm-reset inline"> 容器的IP地址 </div>
+                                    </div>
+                                    <span class="space-2"></span>
+                                    <div class="form-group has-info">
+                                        <label for="inputInfo22" class="col-xs-12 col-sm-3 control-label no-padding-right">GateWay:</label>
+
+                                        <div class="col-xs-12 col-sm-5">
+                                            <span class="block input-icon input-icon-right">
+                                                <input type="text" id="inputInfo22" class="width-100" required>
+                                            </span>
+                                        </div>
+                                        <div class="help-block col-xs-12 col-sm-reset inline"> 容器的网关 </div>
+
+                                    </div>
+                                    <span class="space-2"></span>
+                                    <div class="form-group has-info">
+                                        <label for="inputInfo23" class="col-xs-12 col-sm-3 control-label no-padding-right">NetMask:</label>
+                                        <div class="col-xs-12 col-sm-5">
+                                            <span class="block input-icon input-icon-right">
+                                                <input type="text" id="inputInfo23" class="width-100">
+                                            </span>
+                                        </div>
+                                        <div class="help-block col-xs-12 col-sm-reset inline"> 容器的掩码 </div>
+                                    </div>
+                                    <span class="space-2"></span>
+                                    <div class="form-group has-info">
+                                        <label for="inputInfo24" class="col-xs-12 col-sm-3 control-label no-padding-right">DNS:</label>
+
+                                        <div class="col-xs-12 col-sm-5">
+                                            <span class="block input-icon input-icon-right">
+                                                <input type="text" id="inputInfo24" class="width-100">
+                                            </span>
+                                        </div>
+                                        <div class="help-block col-xs-12 col-sm-reset inline">容器的 dns</div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="step-pane" id="modal-step3">
+                            <div class="col-sm-8 col-sm-offset-2">
+                                <label for="form-field-1" style="margin-bottom: 10px">其他配置:</label>
+                                <textarea class="form-control" style="line-height: 2" id="form-field-1" placeholder=""></textarea>
+                                <hr>
+                                <label for="form-field-2" style="margin-bottom: 10px">afterCreate:</label>
+                                <textarea class="form-control" id="form-field-2" placeholder=""></textarea>
+                            </div>
+
+                        </div>
+                        <div class="step-pane" id="modal-step4">
+                            <div class="col-sm-6" id="all-info-left">
+                                <ul></ul>
+                            </div>
+                            <div class="col-sm-6" id="all-info-right">
+                                <ul></ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer wizard-actions">
+
+                        <button class="btn btn-sm btn-prev" disabled="disabled">
+                            <i class="icon-arrow-left"></i>
+                            上一步
+                        </button>
+
+                        <button class="btn btn-success btn-sm btn-next">
+                            下一步
+                            <i class="icon-arrow-right icon-on-right"></i>
+                        </button>
+
+                        <button class="btn btn-success btn-sm btn-submit" id="addcontainerbtn" style="display: none">
+                            添加
+                            <i class="icon-ok icon-on-right"></i>
+                        </button>
+
+                        <span id="flag" style="display: none">1</span>
+
+                        <button class="btn btn-danger btn-sm pull-left" data-dismiss="modal">
+                            <i class="icon-remove"></i>
+                            取消
+                        </button>
+                    </div>
+                </div>
+            </div>
+    </div><!-- ADD CONTAINER MODAL ENDS -->
+
         {% endblock %}
 
        {% block custom_js %}
@@ -361,6 +467,21 @@
 
 		<!-- ace scripts -->
 		<script src={% static "js/myjs.js" %}></script>
+
+		<!-- page specific plugin scripts -->
+
+		<script src="/static/js/fuelux.wizard.min.js"></script>
+
+		<!-- ace scripts -->
+
+		<script src="/static/js/ace-elements.min.js"></script>
+        <script>
+        $(function($) {
+            $('#modal-wizard .modal-header').ace_wizard();
+            $('#modal-wizard .wizard-actions .btn[data-dismiss=modal]').removeAttr('disabled');
+        })
+        </script>
+
 
 		<!-- inline scripts related to this page -->
         {% endblock %}

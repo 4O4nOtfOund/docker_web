@@ -22,7 +22,7 @@ from django.contrib import admin
 from app01.views import LoginView, LogoutView, IndexView, ContainerView, HostView, ImageView
 from app01.views import ContainerImageView, SpecifyHostView, ImageContainerView, HostImageView, HostContainerView
 from app01.views import ChkHostView, HostAddView, StartContainerView, StopContainerView, RestartContainerView, DeleteContainerView
-from app01.views import AddContainerView
+from app01.views import AddContainerView, AddInfo
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -74,5 +74,8 @@ urlpatterns = [
     url(r'container/delete/(?P<host>[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}:[0-9]{0,5})/(?P<id>[0-9a-zA-Z]+)/$', DeleteContainerView.as_view(), name='deletecontainer'),
 
     # 添加容器
-    url(r'container/add/$', AddContainerView.as_view(), name="addcontainer"),
+    url(r'containeradd/$', AddContainerView.as_view(), name="addcontainer"),
+
+    # 添加容器时获取选择的宿主机包含的镜像
+    url(r'addcontainer/$', AddInfo.as_view(), name='containerimage'),
 ]

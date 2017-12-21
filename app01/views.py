@@ -7,7 +7,7 @@ import requests
 from django.shortcuts import render
 from django.views.generic.base import View
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 
 from models import Container, Image, Host
 from other import date_serilazer
@@ -74,8 +74,9 @@ class ContainerView(View):
                 container_result = container_info_list['message']
 
         all_info = Container.objects.all()
+        add_info = Host.objects.all()
 
-        return render(request, 'container.html', {'all_info': all_info})
+        return render(request, 'container.html', {'all_info': all_info, 'add_info': add_info})
 
 
 # container 和 image中的“宿主机”
@@ -459,23 +460,56 @@ class AddContainerView(View):
         return render(request, 'host.html', {'all_info': all_info})
 
     def post(self, request):
-        hostname = request.POST.get('hostname', '')
+        name = request.POST.get('name', '')
         image = request.POST.get('image', '')
-        networkmode = request.POST.get('networkmode', '')
+        host = request.POST.get('host', '')
+        hostname = request.POST.get('hostname', '')
+        address = request.POST.get('address', '')
+        gateway = request.POST.get('gateway', '')
+        netmask = request.POST.get('netmask', '')
+        other = request.POST.get('other', '')
+        after = request.POST.get('after', '')
+        print name, image, host, hostname, address, gateway, netmask, other, after
 
         data = {
-            "Hostname": hostname,
-            "Image": image,
-            "NetworkMode": networkmode,
+            'Hostname': hostname,
+            'Image': image,
+            "AttachStdin": True,
+            "AttachStdout": True,
+            "AttachStderr": True,
+            "Tty": True,    # 打开终端，相当于docker run 的 -t选项，如果不加则无法start 容器。
+            "OpenStdin": True   # 开启标准输入，相当于docker run 的 -d选项，如果不开启则进入容器后无法输入命令。
         }
 
-        url = "http://192.168.2.145:5555/containers/create"
+        url = "http://%s/containers/create?name=%s" % (host, name)
 
         headers = {
             'content-type': "application/json",
             'cache-control': "no-cache",
         }
 
-        response = requests.request("POST", url, data=data, headers=headers)
+        response = requests.request("POST", url, data=json.dumps(data), headers=headers)
 
         print(response.text)
+        return HttpResponse(response.text)
+
+
+# 添加容器时获取选择的宿主机包含的镜像
+class AddInfo(View):
+    def get(self, request):
+
+        from django.core.urlresolver import reverse
+
+        return HttpResponseRedirect(reverse('host'))
+
+    def post(self, request):
+        image = []
+
+        host = request.POST.get('selected', '')
+
+        images = Image.objects.filter(host=host)
+
+        for each in images:
+            image.append(each.repository)
+
+        return JsonResponse(image, safe=False)

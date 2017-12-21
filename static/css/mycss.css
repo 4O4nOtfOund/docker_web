@@ -1,11 +1,12 @@
 .overlay-loading {
     position: absolute;
-    top: 45%;
-    left: 45%;
+    top: 40%;
+    left: 40%;
+    right: 40%;
     padding: 20px 15px;
     margin: 6px;
     height: auto;
-    width: auto;
+    width: 20%;
     text-align:center;
     font-weight:bold;
     font-size: 20px;
@@ -18,4 +19,12 @@
     position: absolute;
     z-index: 10030;
     left: 50%;
+}
+
+#all-info-left ul li{
+    font-size: 16px;
+}
+
+#all-info-right ul li{
+    font-size: 16px;
 }
