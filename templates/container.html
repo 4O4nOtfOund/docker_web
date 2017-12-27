@@ -19,8 +19,8 @@
 	{% block page-content %}
 	<div class="page-content">
         <div class="row">
-            <div class="alert alert-success" style="display: none">
-                <button type="button" class="close" data-dismiss="alert">
+            <span class="alert alert-success" style="display: none">
+                <button type="button" class="close">
                     <i class="icon-remove"></i>
                 </button>
 
@@ -29,10 +29,9 @@
                     DONE!
                 </strong>
                 操作成功。
-                <br>
-            </div>
-            <div class="alert alert-danger" style="display: none">
-                <button type="button" class="close" data-dismiss="alert">
+            </span>
+            <span class="alert alert-danger" style="display: none">
+                <button type="button" class="close">
                     <i class="icon-remove"></i>
                 </button>
                 <strong>
@@ -40,8 +39,7 @@
                     ERROR!
                 </strong>
                 操作失败。
-                <br>
-            </div>
+            </span>
             <div class="col-xs-12">
                 <!-- PAGE CONTENT BEGINS -->
                 <div class="row">
@@ -57,7 +55,7 @@
                                         <div class="col-sm-6">
                                             <button class="btn btn-sm btn-success" href="#modal-wizard" data-toggle="modal">
                                                     <i class="icon-pencil"></i>
-                                                    添加
+                                                    新建
                                             </button>
                                             <button class="btn btn-sm btn-danger">
                                                     <i class="icon-bolt bigger-110"></i>
@@ -225,7 +223,7 @@
 
                                                     <ul class="dropdown-menu dropdown-danger">
                                                         <li>
-                                                            <a href="#" todo="delete" host={{ each.host }} container_id={{ each.container_id }}>删除容器</a>
+                                                            <a href="#" todo="delete" host={{ each.host }} container_id={{ each.container_id }} image_id={{ each.imageid }}>删除容器</a>
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -460,7 +458,7 @@
         {% endblock %}
 
        {% block custom_js %}
-		<script src={% static "js/bootstrap.min.js" %}></script>
+{#		<script src={% static "js/bootstrap.min.js" %}></script>#}
 
 
 		<!-- page specific plugin scripts -->

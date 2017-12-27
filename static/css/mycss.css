@@ -18,7 +18,6 @@
 .alert{
     position: absolute;
     z-index: 10030;
-    left: 50%;
 }
 
 #all-info-left ul li{

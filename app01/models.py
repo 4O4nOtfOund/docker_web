@@ -12,8 +12,6 @@ from django.db import models
 class Container(models.Model):
     container_id = models.CharField(max_length=100, null=False, blank=False, verbose_name=u'ID')
     name = models.CharField(max_length=50, null=False, blank=False, verbose_name=u'容器名')
-    # imagename = models.ForeignKey('Image', to_field='repository', null=True, blank=True, verbose_name=u'所属镜像', db_column='image_name', related_name='image_name')
-    # imageid = models.F.ForeignKey('Image', to_field='repository', null=True, blank=True, verbose_name=u'所属镜像', db_column='image_name', related_name='image_name')
     imagename = models.CharField(max_length=20, null=False, blank=False, verbose_name=u'所属镜像', db_column='image_name')
     imageid = models.CharField(max_length=100, null=False, blank=False, verbose_name=u'所属镜像ID', db_column='image_id')
     host = models.ForeignKey('Host', to_field='ip', verbose_name=u'所属宿主机')

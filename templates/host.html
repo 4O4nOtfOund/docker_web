@@ -18,295 +18,345 @@
 
 	{% block page-content %}
 	<div class="page-content">
-	<div class="row">
-		<div class="col-xs-12">
-            <div class="alert alert-danger" style="display: none">
-                <button type="button" class="close" data-dismiss="alert">
-                    <i class="icon-remove"></i>
-                </button>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="alert alert-danger" style="display: none">
+                    <button type="button" class="close" data-dismiss="alert">
+                        <i class="icon-remove"></i>
+                    </button>
 
-                <strong>
-                    <i class="icon-remove"></i>
-                    ERROR!
-                </strong>
-                添加失败。
-                <br>
-            </div>
-            <div class="alert alert-success" style="display: none">
-                <button type="button" class="close" data-dismiss="alert">
-                    <i class="icon-remove"></i>
-                </button>
+                    <strong>
+                        <i class="icon-remove"></i>
+                        ERROR!
+                    </strong>
+                    添加失败。
+                    <br>
+                </div>
+                <div class="alert alert-success" style="display: none">
+                    <button type="button" class="close" data-dismiss="alert">
+                        <i class="icon-remove"></i>
+                    </button>
 
-                <strong>
-                    <i class="icon-ok"></i>
-                    DONE!
-                </strong>
-                添加成功。
-                <br>
-            </div>
-			<!-- PAGE CONTENT BEGINS -->
-			<div class="row">
-				<div class="col-xs-12">
-					<div class="table-header">
-						宿主机列表
-                        {{ version }}
-					</div>
+                    <strong>
+                        <i class="icon-ok"></i>
+                        DONE!
+                    </strong>
+                    添加成功。
+                    <br>
+                </div>
+                <!-- PAGE CONTENT BEGINS -->
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="table-header">
+                            宿主机列表
+                            {{ version }}
+                        </div>
 
-					<div class="table-responsive">
-                        <div id="sample-table-2_wrapper" class="dataTables_wrapper" role="grid">
+                        <div class="table-responsive">
                             <div id="sample-table-2_wrapper" class="dataTables_wrapper" role="grid">
-                                <div class="row">
-                                    <div class="col-sm-6">
-                                        <button class="btn btn-sm btn-success" href="#modal-wizard" data-toggle="modal">
-												<i class="icon-pencil"></i>
-                                                添加
-                                        </button>
-                                        <button class="btn btn-sm btn-danger">
-												<i class="icon-bolt bigger-110"></i>
-												删除
-                                        </button>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div class="dataTables_filter" id="sample-table-2_filter">
-                                            <label>Search:
-                                                <input type="text" id="HostSearch" aria-controls="sample-table-2">
-                                            </label>
+                                <div id="sample-table-2_wrapper" class="dataTables_wrapper" role="grid">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <button class="btn btn-sm btn-success" href="#modal-wizard" data-toggle="modal">
+                                                    <i class="icon-pencil"></i>
+                                                    添加
+                                            </button>
+                                            <button class="btn btn-sm btn-danger">
+                                                    <i class="icon-bolt bigger-110"></i>
+                                                    删除
+                                            </button>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="dataTables_filter" id="sample-table-2_filter">
+                                                <label>Search:
+                                                    <input type="text" id="HostSearch" aria-controls="sample-table-2">
+                                                </label>
+                                            </div>
                                         </div>
                                     </div>
+
+                                <table id="sample-table-2" class="table table-striped table-bordered table-hover dataTable" aria-describedby="sample-table-2_info">
+                                <thead>
+                                    <tr>
+                                        <th class="center">
+                                            <label>
+                                                <input type="checkbox" id="chkAll" class="ace" />
+                                                <span class="lbl"></span>
+                                            </label>
+                                        </th>
+                                        <th>IP地址</th>
+                                        <th>镜像数量</th>
+                                        <th>容器数量</th>
+    {#									<th>#}
+    {#										<i class="icon-time bigger-110 hidden-480"></i>#}
+    {#										Update#}
+    {#									</th>#}
+                                        <th>状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="HostBody">
+    {#                                样本数据#}
+                                    <tr>
+                                        <td class="center sorting_1">
+                                            <label>
+                                                <input type="checkbox" class="ace" />
+                                                <span class="lbl"></span>
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <a href="#"> 192.168.2.100 </a>
+                                        </td>
+                                        <td>
+                                            <a href="/image/"> 10 </a></td>
+                                        <td class="hidden-480">
+                                            <a href="/container/"> 100 </a></td>
+    {#									<td>Feb 12</td>#}
+                                        <td class="hidden-480">
+                                            <span class="label label-sm label-warning">Expiring</span>
+    {#                                        <span class="label label-sm label-success">Registered</span>#}
+    {#                                        <span class="label label-sm label-inverse arrowed-in">Flagged</span>#}
+    {#                                        <span class="label label-sm label-info arrowed arrowed-righ">Sold</span>#}
+                                        </td>
+
+                                        <td>
+                                            <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
+                                                <a class="blue" href="#">
+                                                    <i class="icon-zoom-in bigger-130"></i>
+                                                </a>
+
+                                                <a class="green" href="#">
+                                                    <i class="icon-pencil bigger-130"></i>
+                                                </a>
+
+                                                <a class="red" href="#">
+                                                    <i class="icon-trash bigger-130"></i>
+                                                </a>
+                                            </div>
+
+                                            <div class="visible-xs visible-sm hidden-md hidden-lg">
+                                                <div class="inline position-relative">
+                                                    <button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown">
+                                                        <i class="icon-caret-down icon-only bigger-120"></i>
+                                                    </button>
+
+                                                    <ul class="dropdown-menu dropdown-only-icon dropdown-yellow pull-right dropdown-caret dropdown-close">
+                                                        <li>
+                                                            <a href="#" class="tooltip-info" data-rel="tooltip" title="View">
+                                                                <span class="blue">
+                                                                    <i class="icon-zoom-in bigger-120"></i>
+                                                                </span>
+                                                            </a>
+                                                        </li>
+
+                                                        <li>
+                                                            <a href="#" class="tooltip-success" data-rel="tooltip" title="Edit">
+                                                                <span class="green">
+                                                                    <i class="icon-edit bigger-120"></i>
+                                                                </span>
+                                                            </a>
+                                                        </li>
+
+                                                        <li>
+                                                            <a href="#" class="tooltip-error" data-rel="tooltip" title="Delete">
+                                                                <span class="red">
+                                                                    <i class="icon-trash bigger-120"></i>
+                                                                </span>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+    {#                                样本数据结束#}
+                                    {% for each in all_info %}
+                                    <tr>
+                                        <td class="center sorting_1">
+                                            <label>
+                                                <input type="checkbox" class="ace" />
+                                                <span class="lbl"></span>
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <a href="#">{{ each.ip }}</a>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'host_to_image' each.ip %}"> {{ each.image_number }} </a></td>
+                                        <td class="hidden-480">
+                                            <a href="{% url 'host_to_container' each.ip %}"> {{ each.container_number }} </a></td>
+    {#									<td>Feb 12</td>#}
+                                        {% ifequal each.info 'unreachable' %}
+                                        <td class="hidden-480">
+                                            <span class="label label-sm label-danger">unreachable</span>
+    {#                                        <span class="label label-sm label-success">Registered</span>#}
+    {#                                        <span class="label label-sm label-inverse arrowed-in">Flagged</span>#}
+    {#                                        <span class="label label-sm label-info arrowed arrowed-righ">Sold</span>#}
+                                        </td>
+                                        {% else %}
+                                        <td class="hidden-480">
+                                            <span class="label label-sm label-success" href="#modal-host">running</span>
+                                            <span style="display: none">{{ each.info }}</span>
+    {#                                        <span class="label label-sm label-success">Registered</span>#}
+    {#                                        <span class="label label-sm label-inverse arrowed-in">Flagged</span>#}
+    {#                                        <span class="label label-sm label-info arrowed arrowed-righ">Sold</span>#}
+                                        </td>
+                                        {% endifequal %}
+
+                                        <td>
+                                            <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
+                                                <a class="blue" href="#">
+                                                    <i class="icon-zoom-in bigger-130"></i>
+                                                </a>
+
+                                                <a class="green" href="#">
+                                                    <i class="icon-pencil bigger-130"></i>
+                                                </a>
+
+                                                <a class="red" href="#">
+                                                    <i class="icon-trash bigger-130"></i>
+                                                </a>
+                                            </div>
+
+                                            <div class="visible-xs visible-sm hidden-md hidden-lg">
+                                                <div class="inline position-relative">
+                                                    <button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown">
+                                                        <i class="icon-caret-down icon-only bigger-120"></i>
+                                                    </button>
+
+                                                    <ul class="dropdown-menu dropdown-only-icon dropdown-yellow pull-right dropdown-caret dropdown-close">
+                                                        <li>
+                                                            <a href="#" class="tooltip-info" data-rel="tooltip" title="View">
+                                                                <span class="blue">
+                                                                    <i class="icon-zoom-in bigger-120"></i>
+                                                                </span>
+                                                            </a>
+                                                        </li>
+
+                                                        <li>
+                                                            <a href="#" class="tooltip-success" data-rel="tooltip" title="Edit">
+                                                                <span class="green">
+                                                                    <i class="icon-edit bigger-120"></i>
+                                                                </span>
+                                                            </a>
+                                                        </li>
+
+                                                        <li>
+                                                            <a href="#" class="tooltip-error" data-rel="tooltip" title="Delete">
+                                                                <span class="red">
+                                                                    <i class="icon-trash bigger-120"></i>
+                                                                </span>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
                                 </div>
-
-						    <table id="sample-table-2" class="table table-striped table-bordered table-hover dataTable" aria-describedby="sample-table-2_info">
-							<thead>
-								<tr>
-									<th class="center">
-										<label>
-											<input type="checkbox" id="chkAll" class="ace" />
-											<span class="lbl"></span>
-										</label>
-									</th>
-									<th>IP地址</th>
-									<th>镜像数量</th>
-									<th>容器数量</th>
-{#									<th>#}
-{#										<i class="icon-time bigger-110 hidden-480"></i>#}
-{#										Update#}
-{#									</th>#}
-									<th>状态</th>
-									<th>操作</th>
-								</tr>
-							</thead>
-
-							<tbody id="HostBody">
-{#                                样本数据#}
-								<tr>
-									<td class="center sorting_1">
-										<label>
-											<input type="checkbox" class="ace" />
-											<span class="lbl"></span>
-										</label>
-									</td>
-									<td>
-										<a href="#"> 192.168.2.100 </a>
-									</td>
-									<td>
-                                        <a href="/image/"> 10 </a></td>
-									<td class="hidden-480">
-                                        <a href="/container/"> 100 </a></td>
-{#									<td>Feb 12</td>#}
-									<td class="hidden-480">
-										<span class="label label-sm label-warning">Expiring</span>
-{#                                        <span class="label label-sm label-success">Registered</span>#}
-{#                                        <span class="label label-sm label-inverse arrowed-in">Flagged</span>#}
-{#                                        <span class="label label-sm label-info arrowed arrowed-righ">Sold</span>#}
-									</td>
-
-									<td>
-										<div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
-											<a class="blue" href="#">
-												<i class="icon-zoom-in bigger-130"></i>
-											</a>
-
-											<a class="green" href="#">
-												<i class="icon-pencil bigger-130"></i>
-											</a>
-
-											<a class="red" href="#">
-												<i class="icon-trash bigger-130"></i>
-											</a>
-										</div>
-
-										<div class="visible-xs visible-sm hidden-md hidden-lg">
-											<div class="inline position-relative">
-												<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown">
-													<i class="icon-caret-down icon-only bigger-120"></i>
-												</button>
-
-												<ul class="dropdown-menu dropdown-only-icon dropdown-yellow pull-right dropdown-caret dropdown-close">
-													<li>
-														<a href="#" class="tooltip-info" data-rel="tooltip" title="View">
-															<span class="blue">
-																<i class="icon-zoom-in bigger-120"></i>
-															</span>
-														</a>
-													</li>
-
-													<li>
-														<a href="#" class="tooltip-success" data-rel="tooltip" title="Edit">
-															<span class="green">
-																<i class="icon-edit bigger-120"></i>
-															</span>
-														</a>
-													</li>
-
-													<li>
-														<a href="#" class="tooltip-error" data-rel="tooltip" title="Delete">
-															<span class="red">
-																<i class="icon-trash bigger-120"></i>
-															</span>
-														</a>
-													</li>
-												</ul>
-											</div>
-										</div>
-									</td>
-								</tr>
-{#                                样本数据结束#}
-                                {% for each in all_info %}
-								<tr>
-									<td class="center sorting_1">
-										<label>
-											<input type="checkbox" class="ace" />
-											<span class="lbl"></span>
-										</label>
-									</td>
-									<td>
-										<a href="#">{{ each.ip }}</a>
-									</td>
-									<td>
-                                        <a href="{% url 'host_to_image' each.ip %}"> {{ each.image_number }} </a></td>
-									<td class="hidden-480">
-                                        <a href="{% url 'host_to_container' each.ip %}"> {{ each.container_number }} </a></td>
-{#									<td>Feb 12</td>#}
-									<td class="hidden-480">
-										<span class="label label-sm label-warning">Expiring</span>
-{#                                        <span class="label label-sm label-success">Registered</span>#}
-{#                                        <span class="label label-sm label-inverse arrowed-in">Flagged</span>#}
-{#                                        <span class="label label-sm label-info arrowed arrowed-righ">Sold</span>#}
-									</td>
-
-									<td>
-										<div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
-											<a class="blue" href="#">
-												<i class="icon-zoom-in bigger-130"></i>
-											</a>
-
-											<a class="green" href="#">
-												<i class="icon-pencil bigger-130"></i>
-											</a>
-
-											<a class="red" href="#">
-												<i class="icon-trash bigger-130"></i>
-											</a>
-										</div>
-
-										<div class="visible-xs visible-sm hidden-md hidden-lg">
-											<div class="inline position-relative">
-												<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown">
-													<i class="icon-caret-down icon-only bigger-120"></i>
-												</button>
-
-												<ul class="dropdown-menu dropdown-only-icon dropdown-yellow pull-right dropdown-caret dropdown-close">
-													<li>
-														<a href="#" class="tooltip-info" data-rel="tooltip" title="View">
-															<span class="blue">
-																<i class="icon-zoom-in bigger-120"></i>
-															</span>
-														</a>
-													</li>
-
-													<li>
-														<a href="#" class="tooltip-success" data-rel="tooltip" title="Edit">
-															<span class="green">
-																<i class="icon-edit bigger-120"></i>
-															</span>
-														</a>
-													</li>
-
-													<li>
-														<a href="#" class="tooltip-error" data-rel="tooltip" title="Delete">
-															<span class="red">
-																<i class="icon-trash bigger-120"></i>
-															</span>
-														</a>
-													</li>
-												</ul>
-											</div>
-										</div>
-									</td>
-								</tr>
-                                {% endfor %}
-							</tbody>
-						</table>
-                            </div>
-					</div>
-				</div>
-			</div>
-			<!-- PAGE CONTENT ENDS -->
-		</div><!-- /.col -->
-	</div><!-- /.row -->
-  <div id="modal-wizard" class="modal"><!-- ADD HOST MODAL BEGIN -->
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header" data-target="#modal-step-contents">
-                    <h4>添加宿主机</h4>
-                    <span style="display: none" id="addresult">{{ result }}</span>
-                </div>
-
-                <div class="modal-body step-content" id="modal-step-contents">
-
-                    <div class="col-sm-12">
-                        <div class="col-sm-7">
-                            <form action="{% url 'hostadd' %}" method="post" id="hostform">
-                        {% csrf_token %}
-                        <input type="text" name="ip" id="ip" placeholder="IP地址" required>
-                        <code>:</code>
-                        <input class="input-mini" type="text" name="port" id="port" placeholder="端口" required>
-        </form>
                         </div>
-                        <div class="col-sm-5">
-                        <button class="btn btn-primary btn-xs pull-left" id="chkhost">
-                            <i class="icon-beaker align-top bigger-125"></i>
-                            测试链接
-                        </button>
-                        </div>
-
                     </div>
                 </div>
+                <!-- PAGE CONTENT ENDS -->
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+            <div id="modal-wizard" class="modal"><!-- ADD HOST MODAL BEGIN -->
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header" data-target="#modal-step-contents">
+                        <h4>添加宿主机</h4>
+                        <span style="display: none" id="addresult">{{ result }}</span>
+                    </div>
 
-                <div class="modal-footer wizard-actions">
-                    <button class="btn btn-success btn-sm pull-right" type="submit" id="addhost" disabled>
-                        <i class="icon-ok"></i>
-                        添加
-                    </button>
+                    <div class="modal-body step-content" id="modal-step-contents">
 
-                    <button class="btn btn-danger btn-sm pull-left" data-dismiss="modal">
-                        <i class="icon-remove"></i>
-                        取消
-                    </button>
+                        <div class="col-sm-12">
+                            <div class="col-sm-7">
+                                <form action="{% url 'hostadd' %}" method="post" id="hostform">
+                            {% csrf_token %}
+                            <input type="text" name="ip" id="ip" placeholder="IP地址" required>
+                            <code>:</code>
+                            <input class="input-mini" type="text" name="port" id="port" placeholder="端口" required>
+            </form>
+                            </div>
+                            <div class="col-sm-5">
+                            <button class="btn btn-primary btn-xs pull-left" id="chkhost">
+                                <i class="icon-beaker align-top bigger-125"></i>
+                                测试链接
+                            </button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="modal-footer wizard-actions">
+
+                        <button class="btn btn-success btn-sm pull-right" type="submit" id="addhost" disabled>
+                            <i class="icon-ok"></i>
+                            添加
+                        </button>
+
+                        <button class="btn btn-danger btn-sm pull-left" data-dismiss="modal">
+                            <i class="icon-remove"></i>
+                            取消
+                        </button>
+                    </div>
                 </div>
             </div>
+        </div><!-- ADD HOST MODAL ENDS -->
+
+            <div id="modal-host" class="modal-dialog" style="display: none">
+                <div class="modal-content">
+{#                    <div class="modal-header" data-target="#modal-step-contents">#}
+{#                        <h4>添加宿主机</h4>#}
+{#                        <span style="display: none" id="addresult"></span>#}
+{#                    </div>#}
+
+                    <div class="modal-body step-content" id="modal-step-contents">
+                        <textarea style="margin: -150px 0px -20px 0px; height: 230px; width: 541px;">
+                        </textarea>
+                    </div>
+
+                    <div class="modal-footer wizard-actions">
+                        <button class="btn btn-danger btn-sm pull-right" to="modal-host">
+                            <i class="icon-remove"></i>
+                            关闭
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div><!-- ADD HOST MODAL ENDS -->
         </div>
-    </div><!-- ADD HOST MODAL ENDS -->
-	</div><!-- /.page-content -->
+    </div><!-- /.page-content -->
 
 	{% endblock %}
 
        {% block custom_js %}
-		<script src={% static "js/bootstrap.min.js" %}></script>
-{##}
+           <script src={% static "js/bootstrap.min.js" %}></script>
 {#		<!-- ace scripts -->#}
-		<script src={% static "js/myjs.js" %}></script>
+           <script src={% static "js/myjs.js" %}></script>
+           <script>
+           $(function () {
+               var btn = $("span[href='#modal-host']")
+               if (btn.text()=='running') {
+                   var info = btn.next().text()
+                   btn.click(function () {
+                       $("textarea").text(info);
+                       $("#modal-host").show();
+                   })
+               }
 
-		<!-- inline scripts related to this page -->
+               $("button[to='modal-host']").click(function () {
+                   $("#modal-host").hide();
+               })
+           })
 
-        {% endblock %}
+           </script>
+       {% endblock %}
