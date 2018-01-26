@@ -16,7 +16,7 @@
 
 	<body>
         <div class="widget-box-overlay" style="display: none">
-            <span class="overlay-loading">更新信息中，请稍后......</span>
+            <span class="overlay-loading">添加中，请稍后......</span>
         </div>
 
 		<div class="navbar navbar-default" id="navbar">
@@ -143,9 +143,9 @@
 						<ul class="breadcrumb">
 							<li>
 								<i class="icon-home home-icon"></i>
-								<a href="#">首页</a>
+{#								<a href="#">首页</a>#}
 							</li>
-							<li class="active">控制台</li>
+{#							<li class="active">控制台</li>#}
 						</ul><!-- .breadcrumb -->
 
 						<div class="nav-search" id="nav-search">
@@ -325,6 +325,7 @@
                 var todo=$(this).attr('todo');
                 var host=$(this).attr('host');
                 var container_id=$(this).attr('container_id');
+                var callback=$(this).attr('callback');
                 if (todo=='start'){
                     $(".overlay-loading").text('启动中，请稍后......');
                     $(".widget-box-overlay").show();
@@ -337,7 +338,8 @@
                                 success_center();
                                 $(".widget-box-overlay").hide();
                                 $(".alert-success").show();
-                                window.location.href='/container/';
+                                window.location.href=callback;
+{#                                window.location.href='/container/';#}
                             }
                             else{
                                 danger_center();
@@ -365,7 +367,7 @@
                                 success_center();
                                 $(".widget-box-overlay").hide();
                                 $(".alert-success").show();
-                                window.location.href='/container/';
+                                window.location.href=callback;
                             }
                             else{
                                 danger_center();
@@ -393,7 +395,7 @@
                                 success_center();
                                 $(".widget-box-overlay").hide();
                                 $(".alert-success").show();
-                                window.location.href='/container/';
+                                window.location.href=callback;
                             }
                             else{
                                 danger_center();
@@ -414,12 +416,12 @@
         // 删除容器
         $(function () {
             $(".btn-group ul li a").click(function () {
-                console.log($(this).text());
                 $(".alert").hide();
                 var todo=$(this).attr('todo');
                 var host=$(this).attr('host');
                 var container_id=$(this).attr('container_id');
                 var image_id=$(this).attr('image_id');
+                console.log(todo, host, container_id, image_id)
                 if (todo=='delete'){
                     $(".overlay-loading").text('删除中，请稍后......');
                     $(".widget-box-overlay").show();
@@ -542,10 +544,11 @@
 {#                    dataType: 'application/json',#}
                     headers: {'X-CSRFtoken': $.cookie('csrftoken')},
                     success: function (add_result) {
+                            console.log(add_result);
                             if (add_result[0]=='error'){
                                 $(".widget-box-overlay").hide();
                                 $(".alert-danger").html(
-                                    "<button type='button' class='close' data-dismiss='alert'><i class='icon-remove'></i></button> <strong><i class='icon-remove'></i> ERROR!</strong> "+add_result[1]
+                                    "<button type='button' class='close'><i class='icon-remove'></i></button> <strong><i class='icon-remove'></i> ERROR!</strong> "+add_result[1]
                                 )
                                 danger_center();
                                 $(".alert-danger").show();
@@ -553,7 +556,7 @@
                             else if (add_result[0]=='success'){
                                 $(".widget-box-overlay").hide();
                                 $(".alert-success").html(
-                                    "<button type='button' class='close' data-dismiss='alert'><i class='icon-remove'></i></button> <strong><i class='icon-ok'></i> DONE!</strong> "+add_result[1]
+                                    "<button type='button' class='close'><i class='icon-remove'></i></button> <strong><i class='icon-ok'></i> DONE!</strong> "+add_result[1]
                                 )
                                 success_center();
                                 $(".alert-success").show();
@@ -562,9 +565,9 @@
                     },
                     error: function () {
                         $(".widget-box-overlay").hide();
-                        $(".alert-danger").html(
-                            "<button type='button' class='close' data-dismiss='alert'><i class='icon-remove'></i></button> <strong><i class='icon-remove'></i> ERROR!</strong> 执行失败，请打开console"
-                        )
+{#                        $(".alert-danger").html(#}
+{#                            "<button type='button' class='close'><i class='icon-remove'></i></button> <strong><i class='icon-remove'></i> ERROR!</strong> 执行失败."#}
+{#                        )#}
                         danger_center();
                         $(".alert-danger").show();
                     }

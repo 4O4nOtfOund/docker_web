@@ -8,10 +8,10 @@
 	<ul class="breadcrumb">
 		<li>
 			<i class="icon-home home-icon"></i>
-			<a href="{% url 'index' %}">首页</a>
+{#			<a href="{% url 'index' %}">首页</a>#}
 		</li>
-
-        <li class="active">容器列表</li>
+        {{ request.path }}
+{#        <li class="active">容器列表</li>#}
 
 	</ul><!-- .breadcrumb -->
 	{% endblock %}
@@ -54,7 +54,7 @@
                                     <div class="row">
                                         <div class="col-sm-6">
                                             <button class="btn btn-sm btn-success" href="#modal-wizard" data-toggle="modal">
-                                                    <i class="icon-pencil"></i>
+                                                    <i class="icon-plus"></i>
                                                     新建
                                             </button>
                                             <button class="btn btn-sm btn-danger">
@@ -91,83 +91,6 @@
                                 </thead>
 
                                 <tbody id="ContainerBody">
-    {#								样本数据开始#}
-                                    <tr>
-                                        <td class="center sorting_1">
-                                            <label>
-                                                <input type="checkbox" class="ace" />
-                                                <span class="lbl"></span>
-                                            </label>
-                                        </td>
-
-                                        <td>
-                                            <a href="#">4O8F9UY7</a>
-                                        </td>
-                                        <td>ontainer01</td>
-                                        <td class="hidden-480">Nginx</td>
-                                        <td>192.168.2.100</td>
-                                        <td>Feb 12</td>
-                                        <td>
-                                            <span class="label label-sm label-warning">Expiring</span>
-    {#                                        <span class="label label-sm label-success">Registered</span>#}
-    {#                                        <span class="label label-sm label-inverse arrowed-in">Flagged</span>#}
-    {#                                        <span class="label label-sm label-info arrowed arrowed-righ">Sold</span>#}
-                                        </td>
-                                        <td>
-                                            <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
-                                                <a class="blue" href="#">
-                                                    <i class="icon-play bigger-130"></i>
-                                                </a>
-                                                <a class="red" href="#" title="aaa">
-                                                    <i class="icon-stop bigger-130" ></i>
-                                                </a>
-
-                                                <a class="green" href="#">
-                                                    <i class="icon-refresh bigger-130"></i>
-                                                </a>
-
-                                                <a class="red" href="#">
-                                                    <i class="icon-trash bigger-130"></i>
-                                                </a>
-                                            </div>
-
-                                            <div class="visible-xs visible-sm hidden-md hidden-lg">
-                                                <div class="inline position-relative">
-                                                    <button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown">
-                                                        <i class="icon-caret-down icon-only bigger-120"></i>
-                                                    </button>
-
-                                                    <ul class="dropdown-menu dropdown-only-icon dropdown-yellow pull-right dropdown-caret dropdown-close">
-                                                        <li>
-                                                            <a href="#" class="tooltip-info" data-rel="tooltip" title="View">
-                                                                <span class="blue">
-                                                                    <i class="icon-zoom-in bigger-120"></i>
-                                                                </span>
-                                                            </a>
-                                                        </li>
-
-                                                        <li>
-                                                            <a href="#" class="tooltip-success" data-rel="tooltip" title="Edit">
-                                                                <span class="green">
-                                                                    <i class="icon-edit bigger-120"></i>
-                                                                </span>
-                                                            </a>
-                                                        </li>
-
-                                                        <li>
-                                                            <a href="#" class="tooltip-error" data-rel="tooltip" title="Delete">
-                                                                <span class="red">
-                                                                    <i class="icon-trash bigger-120"></i>
-                                                                </span>
-                                                            </a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-    {#                                样本数据结束#}
-
                                     {% for each in all_info %}
                                     <tr>
                                         <td class="center sorting_1">
@@ -182,7 +105,7 @@
                                         </td>
                                         <td>{{ each.name }}</td>
                                         <td>
-                                            <a href="{% url 'container_to_image' each.imageid %}">{{ each.imagename }}</a>
+                                            <a href="{% url 'container_to_image' each.host each.imageid %}">{{ each.imagename }}</a>
                                         </td>
                                         <td>
                                             <a href="{% url 'specify_host' each.host %}">{{ each.host }}</a>
@@ -199,16 +122,16 @@
                                             <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
                                                 {% ifnotequal each.state 'running' %}
                                                 <a class="green" href="#" title="启动容器">
-                                                    <i class="icon-play bigger-130" todo="start" host={{ each.host }} container_id={{ each.container_id }}></i>
+                                                    <i class="icon-play bigger-130" todo="start" host={{ each.host }} container_id={{ each.container_id }} callback={{ request.path }}></i>
                                                 </a>
                                                 {% else %}
                                                 <a class="red" href="#" title="停止容器">
-                                                    <i class="icon-stop bigger-130" todo="stop" host={{ each.host }} container_id={{ each.container_id }}></i>
+                                                    <i class="icon-stop bigger-130" todo="stop" host={{ each.host }} container_id={{ each.container_id }} callback={{ request.path }}></i>
                                                 </a>
                                                 {% endifnotequal %}
 
                                                 <a class="blue" href="#" title="重启容器">
-                                                    <i class="icon-refresh bigger-130" todo="restart" host={{ each.host }} container_id={{ each.container_id }}></i>
+                                                    <i class="icon-refresh bigger-130" todo="restart" host={{ each.host }} container_id={{ each.container_id }} callback={{ request.path }}></i>
                                                 </a>
 
                                                 <a class="blue" href="#" title="查看进程">
@@ -439,7 +362,7 @@
                             <i class="icon-arrow-right icon-on-right"></i>
                         </button>
 
-                        <button class="btn btn-success btn-sm btn-submit" id="addcontainerbtn" style="display: none">
+                        <button class="btn btn-success btn-sm btn-submit" id="addcontainerbtn" data-dismiss="modal" style="display: none" callback={{ request.path }}>
                             添加
                             <i class="icon-ok icon-on-right"></i>
                         </button>
@@ -478,6 +401,15 @@
             $('#modal-wizard .modal-header').ace_wizard();
             $('#modal-wizard .wizard-actions .btn[data-dismiss=modal]').removeAttr('disabled');
         })
+
+
+        $(function () {
+            $('button[class="close"]').click(function () {
+                console.log('cccc')
+                $('.alert').hide();
+            })
+        })
+
         </script>
 
 

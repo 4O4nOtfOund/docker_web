@@ -9,10 +9,11 @@
 	<ul class="breadcrumb">
 		<li>
 			<i class="icon-home home-icon"></i>
-			<a href="{% url 'index' %}">首页</a>
+{#			<a href="{% url 'index' %}">首页</a>#}
 		</li>
 
-        <li class="active">镜像列表</li>
+{#        <li class="active">镜像列表</li>#}
+    {{ request.path }}
 
 	</ul><!-- .breadcrumb -->
 	{% endblock %}
@@ -21,6 +22,30 @@
 	<div class="page-content">
 	<div class="row">
 		<div class="col-xs-12">
+            <div class="alert alert-danger" style="display: none">
+                <button type="button" class="close">
+                    <i class="icon-remove"></i>
+                </button>
+
+                <strong>
+                    <i class="icon-remove"></i>
+                    ERROR!
+                </strong>
+                <span>拉取失败。</span>
+                <br>
+            </div>
+            <div class="alert alert-success" style="display: none">
+                <button type="button" class="close">
+                    <i class="icon-remove"></i>
+                </button>
+
+                <strong>
+                    <i class="icon-ok"></i>
+                    DONE!
+                </strong>
+                <span>拉取成功。</span>
+                <br>
+            </div>
 			<!-- PAGE CONTENT BEGINS -->
 			<div class="row">
 				<div class="col-xs-12">
@@ -33,9 +58,9 @@
                             <div id="sample-table-2_wrapper" class="dataTables_wrapper" role="grid">
                                 <div class="row">
                                     <div class="col-sm-6">
-                                        <button class="btn btn-sm btn-success">
-												<i class="icon-pencil"></i>
-												添加
+                                        <button class="btn btn-sm btn-success" href="#modal-wizard" data-toggle="modal">
+												<i class="icon-cloud-download"></i>
+												拉取
                                         </button>
                                         <button class="btn btn-sm btn-danger">
 												<i class="icon-bolt bigger-110"></i>
@@ -71,82 +96,6 @@
 							</thead>
 
 							<tbody id="ImageBody">
-{#                                样本数据开始#}
-								<tr>
-									<td class="center sorting_1">
-										<label>
-											<input type="checkbox" class="ace" />
-											<span class="lbl"></span>
-										</label>
-									</td>
-
-									<td>
-										<a href="#">3EF9O0D</a>
-									</td>
-									<td>Nginx</td>
-									<td>192.168.2.100</td>
-                                    <td>50</td>
-									<td>Feb 12</td>
-									<td>
-                                        100 MB
-{#										<span class="label label-sm label-warning">Expiring</span>#}
-{#                                        <span class="label label-sm label-success">Registered</span>#}
-{#                                        <span class="label label-sm label-inverse arrowed-in">Flagged</span>#}
-{#                                        <span class="label label-sm label-info arrowed arrowed-righ">Sold</span>#}
-									</td>
-
-									<td>
-										<div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
-											<a class="blue" href="#">
-												<i class="icon-zoom-in bigger-130"></i>
-											</a>
-
-											<a class="green" href="#">
-												<i class="icon-pencil bigger-130"></i>
-											</a>
-
-											<a class="red" href="#">
-												<i class="icon-trash bigger-130"></i>
-											</a>
-										</div>
-
-										<div class="visible-xs visible-sm hidden-md hidden-lg">
-											<div class="inline position-relative">
-												<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown">
-													<i class="icon-caret-down icon-only bigger-120"></i>
-												</button>
-
-												<ul class="dropdown-menu dropdown-only-icon dropdown-yellow pull-right dropdown-caret dropdown-close">
-													<li>
-														<a href="#" class="tooltip-info" data-rel="tooltip" title="View">
-															<span class="blue">
-																<i class="icon-zoom-in bigger-120"></i>
-															</span>
-														</a>
-													</li>
-
-													<li>
-														<a href="#" class="tooltip-success" data-rel="tooltip" title="Edit">
-															<span class="green">
-																<i class="icon-edit bigger-120"></i>
-															</span>
-														</a>
-													</li>
-
-													<li>
-														<a href="#" class="tooltip-error" data-rel="tooltip" title="Delete">
-															<span class="red">
-																<i class="icon-trash bigger-120"></i>
-															</span>
-														</a>
-													</li>
-												</ul>
-											</div>
-										</div>
-									</td>
-								</tr>
-{#                                样本数据结束#}
-
                                 {% for each in all_info %}
                                 <tr>
 									<td class="center sorting_1">
@@ -164,59 +113,77 @@
                                         <a href="{% url 'specify_host' each.host %}" >{{ each.host }}</a>
                                     </td>
                                     <td>
-                                        {% ifequal each.container_number 0 %}<a href="#">0</a> {% else %}<a href="{% url 'image_to_container' each.image_id %}" >{{ each.container_number }}</a>{% endifequal %}</td>
+                                        {% ifequal each.container_number 0 %}<a href="#">0</a> {% else %}<a href="{% url 'image_to_container' each.host each.image_id %}" >{{ each.container_number }}</a>{% endifequal %}</td>
 									<td>{{ each.create_time | date:"Y-m-d H:i:s" }}</td>
 									<td>{{ each.size | b2mb }}</td>
 
 
 									<td>
-										<div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
-											<a class="blue" href="#">
-												<i class="icon-zoom-in bigger-130"></i>
-											</a>
 
-											<a class="green" href="#">
-												<i class="icon-pencil bigger-130"></i>
-											</a>
+                                        <div class="btn-group">
+                                            <button data-toggle="dropdown" class="btn btn-minier btn-danger dropdown-toggle">
+                                                Danger
+                                                <i class="icon-angle-down icon-on-right"></i>
+                                            </button>
 
-											<a class="red" href="#">
-												<i class="icon-trash bigger-130"></i>
-											</a>
-										</div>
+                                            <ul class="dropdown-menu dropdown-danger">
+                                                <li>
+                                                    <a href="#" todo="deleteimage" host={{ each.host }} image_id={{ each.image_id }} callback={{ request.path }}>删除容器</a>
+                                                </li>
+                                            </ul>
+                                        </div>
 
-										<div class="visible-xs visible-sm hidden-md hidden-lg">
-											<div class="inline position-relative">
-												<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown">
-													<i class="icon-caret-down icon-only bigger-120"></i>
-												</button>
+{#										<div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">#}
+{#											<a class="blue" href="#">#}
+{#												<i class="icon-zoom-in bigger-130"></i>#}
+{#											</a>#}
+{##}
+{#											<a class="green" href="#">#}
+{#												<i class="icon-pencil bigger-130"></i>#}
+{#											</a>#}
+{##}
+{##}
+{##}
+{##}
+{##}
+{#											<a class="red" href="#">#}
+{#												<i class="icon-trash bigger-130"></i>#}
+{#											</a>#}
+{#										</div>#}
 
-												<ul class="dropdown-menu dropdown-only-icon dropdown-yellow pull-right dropdown-caret dropdown-close">
-													<li>
-														<a href="#" class="tooltip-info" data-rel="tooltip" title="View">
-															<span class="blue">
-																<i class="icon-zoom-in bigger-120"></i>
-															</span>
-														</a>
-													</li>
-
-													<li>
-														<a href="#" class="tooltip-success" data-rel="tooltip" title="Edit">
-															<span class="green">
-																<i class="icon-edit bigger-120"></i>
-															</span>
-														</a>
-													</li>
-
-													<li>
-														<a href="#" class="tooltip-error" data-rel="tooltip" title="Delete">
-															<span class="red">
-																<i class="icon-trash bigger-120"></i>
-															</span>
-														</a>
-													</li>
-												</ul>
-											</div>
-										</div>
+{#										<div class="visible-xs visible-sm hidden-md hidden-lg">#}
+{#											<div class="inline position-relative">#}
+{#												<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown">#}
+{#													<i class="icon-caret-down icon-only bigger-120"></i>#}
+{#												</button>#}
+{##}
+{#												<ul class="dropdown-menu dropdown-only-icon dropdown-yellow pull-right dropdown-caret dropdown-close">#}
+{#													<li>#}
+{#														<a href="#" class="tooltip-info" data-rel="tooltip" title="View">#}
+{#															<span class="blue">#}
+{#																<i class="icon-zoom-in bigger-120"></i>#}
+{#															</span>#}
+{#														</a>#}
+{#													</li>#}
+{##}
+{#													<li>#}
+{#														<a href="#" class="tooltip-success" data-rel="tooltip" title="Edit">#}
+{#															<span class="green">#}
+{#																<i class="icon-edit bigger-120"></i>#}
+{#															</span>#}
+{#														</a>#}
+{#													</li>#}
+{##}
+{#													<li>#}
+{#														<a href="#" class="tooltip-error" data-rel="tooltip" title="Delete">#}
+{#															<span class="red">#}
+{#																<i class="icon-trash bigger-120"></i>#}
+{#															</span>#}
+{#														</a>#}
+{#													</li>#}
+{#												</ul>#}
+{#											</div>#}
+{#										</div>#}
 									</td>
 								</tr>
                                 {% endfor %}
@@ -228,16 +195,152 @@
 				</div>
 			</div>
 			<!-- PAGE CONTENT ENDS -->
+            <div id="modal-wizard" class="modal"><!-- ADD HOST MODAL BEGIN -->
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header" data-target="#modal-step-contents">
+                        <h4>拉取镜像</h4>
+{#                        <span style="display: none" id="addresult">{{ result }}</span>#}
+                    </div>
+
+                    <div class="modal-body step-content" id="modal-step-contents">
+
+                        <div class="col-sm-12">
+                            <div class="col-sm-8">
+                                <input type="text" name="imagename" id="imagename" placeholder="镜像名称" required>
+                                <code>@</code>
+                                <select id="imagehost">
+                                        <option>宿主机</option>
+                                    {% for each in all_host %}
+                                        <option>{{ each }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+{#                            <div class="col-sm-4">#}
+{#                                <button class="btn btn-primary btn-xs pull-left" id="chkhost">#}
+{#                                <i class="icon-beaker align-top bigger-125"></i>#}
+{#                                测试链接#}
+{#                            </button>#}
+{#                            </div>#}
+
+                        </div>
+                    </div>
+
+                    <div class="modal-footer wizard-actions">
+
+                        <button class="btn btn-success btn-sm pull-right" data-dismiss="modal" id="pullimage">
+                            <i class="icon-ok"></i>
+                            拉取
+                        </button>
+
+                        <button class="btn btn-danger btn-sm pull-left" data-dismiss="modal">
+                            <i class="icon-remove"></i>
+                            取消
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- ADD HOST MODAL ENDS -->
+
 		</div><!-- /.col -->
 	</div><!-- /.row -->
 	</div><!-- /.page-content -->
 	{% endblock %}
 
-       {% block custom_js %}
-		<script src={% static "js/bootstrap.min.js" %}></script>
-{##}
-{#		<!-- ace scripts -->#}
-		<script src={% static "js/myjs.js" %}></script>
+    {% block custom_js %}
+{#        <script src={% static "js/bootstrap.min.js" %}></script>#}
+        <script src={% static "js/myjs.js" %}></script>
+        <script>
+            $(function () {
+                $("#pullimage").click(function () {
+                    if ($("#imagename").val()!=''){
+                        var host = $("#imagehost").val();
+{#                        $("#modal-wizard").hide();#}
+                        $(".modal-backdrop").hide();
+                        $(".overlay-loading").text('拉取镜像中，请稍后......');
+                        $(".widget-box-overlay").show();
+                        $.ajax({
+                            url: '/pullimage/'+host+'/',
+                            type: 'post',
+                            data:{'imagename': $("#imagename").val()},
+                            headers: {'X-CSRFtoken': $.cookie('csrftoken')},
+                            success: function (result) {
+                                if (result=='success'){
+                                    console.log('success')
+{#                                    $(".widget-box-overlay").hide();#}
+                                    $(".modal-backdrop").hide();
+                                    success_center();
+                                    $(".alert-success").show();
+                                    window.location.href='/image/';
 
-		<!-- inline scripts related to this page -->
-        {% endblock %}
+                                }
+                                else{
+                                    $(".widget-box-overlay").hide();
+                                    $(".modal-backdrop").hide();
+                                    console.log('failed');
+                                    danger_center();
+                                    $(".alert-danger").show();
+                                }
+
+                            },
+                            error: function () {
+                                $(".widget-box-overlay").hide();
+                                $(".modal-backdrop").hide();
+                                console.log('failed');
+                                danger_center();
+                                $(".alert-danger").show();
+                            }
+                        })
+                    }
+                    else {
+                        console.log('null value')
+                    }
+                })
+
+            })
+
+            $(function () {
+                $("ul li a[todo='deleteimage']").click(function () {
+                    $(".alert").hide();
+                    var host = $(this).attr('host');
+                    var image_id = $(this).attr('image_id');
+                    var callback = $(this).attr('callback');
+                    $(".overlay-loading").text('删除中，请稍后......');
+                    $(".widget-box-overlay").show();
+                    $.ajax({
+                        url: '/image/delete/' + host + "/",
+                        type: 'post',
+                        data: {'image_id': image_id},
+                        headers: {"X-CSRFtoken": $.cookie("csrftoken")},
+                        success: function (delete_status) {
+                            if (delete_status == 'success') {
+                                success_center();
+                                $(".widget-box-overlay").hide();
+                                $(".alert-success span").text('删除成功。')
+                                $('.alert-success').show();
+                                window.location.href=callback;
+                            }
+                            else {
+                                danger_center();
+                                $(".widget-box-overlay").hide();
+                                $(".alert-danger span").text('删除失败。')
+                                $('.alert-danger').show();
+                            }
+                        },
+                        error: function () {
+                            danger_center();
+                            $(".widget-box-overlay").hide();
+                            $(".alert-danger span").text('删除失败。')
+                            $('.alert-danger').show();
+                        }
+                    })
+                })
+            })
+
+            $(function () {
+                $("button[class='close']").click(function () {
+                    $('.alert').hide();
+                })
+            })
+        </script>
+    {% endblock %}

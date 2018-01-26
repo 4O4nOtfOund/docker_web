@@ -10,6 +10,7 @@ register = template.Library()
 
 @register.filter(name='b2mb')
 def convert(value):
-    value = float(203538471) / 1000 / 1000
+    value = float(value) / 1000 / 1000
 
     return '%.1f %s' % (value, 'MB')
+

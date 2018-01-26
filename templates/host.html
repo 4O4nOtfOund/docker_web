@@ -8,10 +8,10 @@
 	<ul class="breadcrumb">
 		<li>
 			<i class="icon-home home-icon"></i>
-			<a href="{% url 'index' %}">首页</a>
+{#			<a href="{% url 'index' %}">首页</a>#}
 		</li>
-
-        <li class="active">宿主机列表</li>
+        {{ request.path }}
+{#        <li class="active">宿主机列表</li>#}
 
 	</ul><!-- .breadcrumb -->
 	{% endblock %}
@@ -58,7 +58,7 @@
                                     <div class="row">
                                         <div class="col-sm-6">
                                             <button class="btn btn-sm btn-success" href="#modal-wizard" data-toggle="modal">
-                                                    <i class="icon-pencil"></i>
+                                                    <i class="icon-plus"></i>
                                                     添加
                                             </button>
                                             <button class="btn btn-sm btn-danger">
@@ -97,80 +97,6 @@
                                 </thead>
 
                                 <tbody id="HostBody">
-    {#                                样本数据#}
-                                    <tr>
-                                        <td class="center sorting_1">
-                                            <label>
-                                                <input type="checkbox" class="ace" />
-                                                <span class="lbl"></span>
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <a href="#"> 192.168.2.100 </a>
-                                        </td>
-                                        <td>
-                                            <a href="/image/"> 10 </a></td>
-                                        <td class="hidden-480">
-                                            <a href="/container/"> 100 </a></td>
-    {#									<td>Feb 12</td>#}
-                                        <td class="hidden-480">
-                                            <span class="label label-sm label-warning">Expiring</span>
-    {#                                        <span class="label label-sm label-success">Registered</span>#}
-    {#                                        <span class="label label-sm label-inverse arrowed-in">Flagged</span>#}
-    {#                                        <span class="label label-sm label-info arrowed arrowed-righ">Sold</span>#}
-                                        </td>
-
-                                        <td>
-                                            <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
-                                                <a class="blue" href="#">
-                                                    <i class="icon-zoom-in bigger-130"></i>
-                                                </a>
-
-                                                <a class="green" href="#">
-                                                    <i class="icon-pencil bigger-130"></i>
-                                                </a>
-
-                                                <a class="red" href="#">
-                                                    <i class="icon-trash bigger-130"></i>
-                                                </a>
-                                            </div>
-
-                                            <div class="visible-xs visible-sm hidden-md hidden-lg">
-                                                <div class="inline position-relative">
-                                                    <button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown">
-                                                        <i class="icon-caret-down icon-only bigger-120"></i>
-                                                    </button>
-
-                                                    <ul class="dropdown-menu dropdown-only-icon dropdown-yellow pull-right dropdown-caret dropdown-close">
-                                                        <li>
-                                                            <a href="#" class="tooltip-info" data-rel="tooltip" title="View">
-                                                                <span class="blue">
-                                                                    <i class="icon-zoom-in bigger-120"></i>
-                                                                </span>
-                                                            </a>
-                                                        </li>
-
-                                                        <li>
-                                                            <a href="#" class="tooltip-success" data-rel="tooltip" title="Edit">
-                                                                <span class="green">
-                                                                    <i class="icon-edit bigger-120"></i>
-                                                                </span>
-                                                            </a>
-                                                        </li>
-
-                                                        <li>
-                                                            <a href="#" class="tooltip-error" data-rel="tooltip" title="Delete">
-                                                                <span class="red">
-                                                                    <i class="icon-trash bigger-120"></i>
-                                                                </span>
-                                                            </a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-    {#                                样本数据结束#}
                                     {% for each in all_info %}
                                     <tr>
                                         <td class="center sorting_1">
@@ -317,7 +243,7 @@
 {#                    </div>#}
 
                     <div class="modal-body step-content" id="modal-step-contents">
-                        <textarea style="margin: -150px 0px -20px 0px; height: 230px; width: 541px;">
+                        <textarea style="margin: -150px 0px -20px 0px; height: 230px; width: 541px;" readonly>
                         </textarea>
                     </div>
 
@@ -344,14 +270,14 @@
            <script src={% static "js/myjs.js" %}></script>
            <script>
            $(function () {
-               var btn = $("span[href='#modal-host']")
-               if (btn.text()=='running') {
-                   var info = btn.next().text()
-                   btn.click(function () {
+               $("span[href='#modal-host']").click(function () {
+                   console.log($(this).text());
+                   if ($(this).text()=='running'){
+                       var info = $(this).next().text();
                        $("textarea").text(info);
                        $("#modal-host").show();
-                   })
-               }
+                   }
+               })
 
                $("button[to='modal-host']").click(function () {
                    $("#modal-host").hide();

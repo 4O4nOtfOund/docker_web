@@ -22,7 +22,7 @@ from django.contrib import admin
 from app01.views import LoginView, LogoutView, IndexView, ContainerView, HostView, ImageView
 from app01.views import ContainerImageView, SpecifyHostView, ImageContainerView, HostImageView, HostContainerView
 from app01.views import ChkHostView, HostAddView, StartContainerView, StopContainerView, RestartContainerView, DeleteContainerView
-from app01.views import AddContainerView, AddInfo, DashbordView
+from app01.views import AddContainerView, AddInfo, DashbordView, PullImageView, DeleteImageView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -34,7 +34,7 @@ urlpatterns = [
     url(r'^container/$', ContainerView.as_view(), name='container'),
 
     # image中的“容器数量”
-    url(r'^container/(?P<imageid>[0-9a-z]+)/$', ImageContainerView.as_view(), name='image_to_container'),
+    url(r'^container/(?P<host>[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}:[0-9]{0,5})/(?P<imageid>[0-9a-z]+)/$', ImageContainerView.as_view(), name='image_to_container'),
 
     # host中的“容器数量”
     url(r'^container/(?P<host>[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}:[0-9]{0,5})/$', HostContainerView.as_view(), name='host_to_container'),
@@ -43,7 +43,7 @@ urlpatterns = [
     url(r'^image/$', ImageView.as_view(), name='image'),
 
     # container中的“镜像”
-    url(r'^image/(?P<id>[a-z0-9A_Z-_]+)/$', ContainerImageView.as_view(), name='container_to_image'),
+    url(r'^image/(?P<host>[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}:[0-9]{0,5})/(?P<id>[a-z0-9A_Z-_]+)/$', ContainerImageView.as_view(), name='container_to_image'),
 
     # host中的“镜像数量”
     # url(r'image/(?P<host1>[0-9]{1,3})\.(?P<host2>[0-9]{1,3})\.(?P<host3>[0-9]{1,3})\.(?P<host4>[0-9]{1,3})/$', HostImageView.as_view(), name='host_to_image'),
@@ -80,4 +80,8 @@ urlpatterns = [
     url(r'addcontainer/$', AddInfo.as_view(), name='containerimage'),
 
     url(r'dashbord/$', DashbordView.as_view(), name='dashbord'),
+
+    url(r'pullimage/(?P<ip>[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}:[0-9]{0,5})/$', PullImageView.as_view(), name='pullimage'),
+
+    url(r'image/delete/(?P<ip>[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}:[0-9]{0,5})/$', DeleteImageView.as_view(), name='deleteimage'),
 ]

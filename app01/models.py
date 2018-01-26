@@ -21,14 +21,15 @@ class Container(models.Model):
     class Meta:
         verbose_name = u'容器列表'
         verbose_name_plural = verbose_name
+        ordering = ('host',)
 
     def __unicode__(self):
         return self.name
 
 
 class Image(models.Model):
-    image_id = models.CharField(max_length=100, unique=True, null=False, blank=False, verbose_name=u'ID')
-    repository = models.CharField(max_length=50,  unique=True, null=False, blank=False, verbose_name=u'仓库镜像')
+    image_id = models.CharField(max_length=100, null=False, blank=False, verbose_name=u'ID')
+    repository = models.CharField(max_length=50, null=False, blank=False, verbose_name=u'仓库镜像')
     host = models.ForeignKey('Host', to_field='ip', on_delete=models.CASCADE, verbose_name=u'所属宿主机')
     create_time = models.DateTimeField(default=datetime.now, verbose_name=u'创建时间')
     container_number = models.IntegerField(verbose_name=u'容器数量')
@@ -37,6 +38,7 @@ class Image(models.Model):
     class Meta:
         verbose_name = u'镜像列表'
         verbose_name_plural = verbose_name
+        ordering = ('host',)
 
     def __unicode__(self):
         return self.repository
@@ -51,6 +53,7 @@ class Host(models.Model):
     class Meta:
         verbose_name = u'宿主机列表'
         verbose_name_plural = verbose_name
+        ordering = ('ip',)
 
     def __unicode__(self):
         return self.ip

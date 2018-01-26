@@ -14,9 +14,12 @@ from django.shortcuts import render
 from django.views.generic.base import View
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
+from django.db.models import Q
+from multiprocessing import Pool
 
 from models import Container, Image, Host
-from other import date_serilazer
+from other import data_serilazer
+from other import Dashbord
 
 # Create your views here.
 
@@ -97,10 +100,11 @@ class SpecifyHostView(View):
 
 # container中的“镜像”
 class ContainerImageView(View):
-    def get(self, request, id):
-        all_info = Image.objects.filter(image_id=id)
+    def get(self, request, host, id):
+        all_info = Image.objects.filter(Q(image_id=id) & Q(host=host))
+        all_host = Host.objects.all().distinct()
 
-        return render(request, 'image.html', {'all_info': all_info})
+        return render(request, 'image.html', {'all_info': all_info, 'all_host': all_host})
 
 
 # 宿主机列表
@@ -120,32 +124,36 @@ class HostView(View):
 class HostImageView(View):
     def get(self, request, host):
         all_info = Image.objects.filter(host=host)
+        all_host = Host.objects.all().distinct()
 
-        return render(request, 'image.html', {'all_info': all_info})
+        return render(request, 'image.html', {'all_info': all_info, 'all_host': all_host})
 
 
 # host中的“容器数量”
 class HostContainerView(View):
     def get(self, request, host):
         all_info = Container.objects.filter(host=host)
+        add_info = Host.objects.all()
 
-        return render(request, 'container.html', {'all_info': all_info})
+        return render(request, 'container.html', {'all_info': all_info, 'add_info': add_info})
 
 
 # 菜单“镜像列表”
 class ImageView(View):
     def get(self, request):
         all_info = Image.objects.all()
+        all_host = Host.objects.all().distinct()
 
-        return render(request, 'image.html', {'all_info': all_info})
+        return render(request, 'image.html', {'all_info': all_info, 'all_host': all_host})
 
 
 # image中的“容器数量”
 class ImageContainerView(View):
-    def get(self, request, imageid):
-        all_info = Container.objects.filter(imageid=imageid)
+    def get(self, request, host, imageid):
+        all_info = Container.objects.filter(Q(imageid=imageid) & Q(host=host))
+        add_info = Host.objects.all()
 
-        return render(request, 'container.html', {'all_info': all_info})
+        return render(request, 'container.html', {'all_info': all_info, 'add_info': add_info})
 
 
 # 检测宿主机
@@ -195,14 +203,17 @@ class HostAddView(View):
             image_number = host_info_list['Images']
         else:
             host_result = 'error'
+            info = 'unreachable'
 
         if not Host.objects.filter(ip=host):
             Host.objects.create(ip=host,
                                 container_number=container_number,
-                                image_number=image_number)
+                                image_number=image_number,
+                                info=json.dumps(host_info_list, sort_keys=True, indent=4))
         else:
             Host.objects.filter(ip=host).update(container_number=container_number,
-                                              image_number=image_number)
+                                                image_number=image_number,
+                                                info=json.dumps(host_info_list, sort_keys=True, indent=4))
 
         # 添加host时收集container信息
         container_info = urllib.urlopen(container_url).read()
@@ -217,8 +228,7 @@ class HostAddView(View):
                 container_imagename = each_container['Image']
                 container_imageid = each_container['ImageID'].split(":")[-1]
                 container_host = Host.objects.get(ip=host)
-                print container_host
-                container_create_time = date_serilazer.convert(request, each_container['Created'])
+                container_create_time = data_serilazer.convert(each_container['Created'])
                 container_state = each_container['State']
 
                 print container_id, container_name, container_imagename, container_imageid, container_host, container_create_time, container_state
@@ -247,19 +257,19 @@ class HostAddView(View):
             for each_image in image_info_list:
                 # print each_image
                 image_id = each_image['Id'].split(":")[-1]
-                print image_id
                 image_repository = each_image['RepoTags'][0].split("/")[-1].split(":")[0]
                 image_host = Host.objects.get(ip=host)
-                image_create_time = date_serilazer.convert(request, each_image['Created'])
+                image_create_time = data_serilazer.convert(each_image['Created'])
                 image_size = each_image['Size']
-                image_container_number = Container.objects.filter(imageid=image_id).count()
+                image_container_number = Container.objects.filter(Q(imageid=image_id) & Q(host=host)).count()
+                print '++container num', image_container_number
 
-                if not Image.objects.filter(image_id=image_id):
+                if not Image.objects.filter(Q(image_id=image_id) & Q(host=host)):
                     Image.objects.create(image_id=image_id, repository=image_repository,
                                          host=image_host, create_time=image_create_time,
                                          container_number=image_container_number, size=image_size)
                 else:
-                    Image.objects.filter(image_id=image_id).update( host=image_host,
+                    Image.objects.filter(Q(image_id=image_id) & Q(host=host)).update(host=image_host,
                                                                     create_time=image_create_time,
                                                                     container_number=image_container_number,
                                                                     size=image_size)
@@ -375,20 +385,6 @@ class RestartContainerView(View):
         container_url = 'http://%s/containers/json?all=1' % (host, )
 
         print restart_url, container_url
-
-        container_info = urllib.urlopen(container_url).read()
-        container_info_list = json.loads(container_info)
-
-        if isinstance(container_info_list, list):
-            for each_container in container_info_list:
-                # print each_container
-                if each_container['Id'] == id:
-                    restart_status_befroe = each_container['State']
-                    print restart_status_befroe
-                    break
-        else:
-            restart_status = 'failed'
-
         try:
             info = requests.post(restart_url)
             print info
@@ -401,11 +397,10 @@ class RestartContainerView(View):
 
         if isinstance(container_info_list, list):
             for each_container in container_info_list:
-                # print each_container
                 if each_container['Id'] == id:
                     restart_status = each_container['State']
                     print restart_status
-                    if restart_status == 'running' and restart_status == restart_status_befroe:
+                    if restart_status == 'running':
                         Container.objects.filter(container_id=id).update(state=restart_status)
                     break
         else:
@@ -414,6 +409,7 @@ class RestartContainerView(View):
         return HttpResponse(restart_status)
 
 
+# 删除容器
 class DeleteContainerView(View):
     def get(self, request):
         all_info = Host.objects.all()
@@ -428,14 +424,17 @@ class DeleteContainerView(View):
 
         print delete_url, container_url
 
-        try:
-            info = requests.delete(delete_url)
-            print info
-            if info != '':
-                delete_status = 'failed'
-        except Exception as delete_status:
-            print delete_status
-            return HttpResponse(delete_status)
+        info = requests.delete(delete_url)
+        print info
+
+        # try:
+        #     info = requests.delete(delete_url)
+        #     print info
+        #     if info != '':
+        #         delete_status = 'failed'
+        # except Exception as delete_status:
+        #     print delete_status
+        #     return HttpResponse(delete_status)
 
         container_info = urllib.urlopen(container_url).read()
         container_info_list = json.loads(container_info)
@@ -459,7 +458,7 @@ class DeleteContainerView(View):
             Container.objects.filter(container_id=id).delete()
             # 删除成功后host和image中的容器数量减少1
             number_host = Host.objects.get(ip=host)
-            number_image = Image.objects.get(image_id=image_id)
+            number_image = Image.objects.get(Q(image_id=image_id) & Q(host=host))
             print number_host, number_image
             number_host.container_number -= 1
             number_image.container_number -= 1
@@ -510,7 +509,6 @@ class AddContainerView(View):
         cmd = 'docker exec %s %s' % (name, after)
         print cmd
 
-
         url = "http://%s/containers/create?name=%s" % (host, name)
         start_url = "http://%s/containers/%s/start" % (host, name)
 
@@ -523,7 +521,7 @@ class AddContainerView(View):
         response = json.loads(response.text)
 
         if 'message' in response.keys():
-            add_result = ['err', response['message']]
+            add_result = ['error', response['message']]
             return JsonResponse(add_result, safe=False)
         elif 'Id' in response.keys():
             container_id = response['Id']
@@ -548,12 +546,24 @@ class AddContainerView(View):
             add_result = ['success', container_id]
             local_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
             create_time = datetime.datetime.strptime(local_time, '%Y-%m-%d %H:%M:%S')
-            imageid = Image.objects.filter(repository='centos').values('host').filter(host='192.168.2.145:5555').values('image_id')
+            imageid = Image.objects.filter(Q(repository=image) & Q(host=host)).values('image_id')
+
             for each_imageid in imageid:
                 imageid = each_imageid['image_id']
-            print imageid
-            host = Host.objects.get(ip=host)
-            Container.objects.create(container_id=container_id, name=name, imagename=image, imageid=imageid, host=host, create_time=create_time, state='running')
+            host = Host.objects.get(ip=str(host))
+
+            # try:
+            Container.objects.create(container_id=container_id, name=name, imagename=image, imageid=imageid, host=host,
+                                     create_time=create_time, state='running')
+            number_host = Host.objects.get(ip=str(host))
+            number_image = Image.objects.get(Q(image_id=imageid) & Q(host=host))
+            print number_host, number_image
+            number_host.container_number += 1
+            number_image.container_number += 1
+            number_host.save()
+            number_image.save()
+        # except Exception as e:
+            #     print e
 
             return JsonResponse(add_result, safe=False)
 
@@ -589,121 +599,122 @@ class AddInfo(View):
 
 
 class DashbordView(View):
-    def get(self, request):
-
-        from django.core.urlresolvers import reverse
-        return HttpResponseRedirect(reverse('host'))
-
     def post(self, request):
-        fail_host = 0
-        host_result = None
-        container_result = None
-        image_result = None
-
+        res = []
         all_host = Host.objects.all()
-        host_number = Host.objects.all().count()
+        # print u'顺序执行开始', time.strftime('%H:%M:%S', time.localtime())
+        # before = time.time()
+        # for each in all_host:
+        #     # res.append(do(each))
+        #     do(each)
+        #
+        # for line in res:
+        #     print line
+        # print u'顺序执行结束', time.strftime('%H:%M:%S', time.localtime())
+        # after = time.time()
+        # use = after-before
+        # print u'耗时 ', use
 
-        for each_host in all_host:
-
-            host_url = 'http://%s/info' % (each_host, )
-            container_url = 'http://%s/containers/json?all=1' % (each_host,)
-            image_url = 'http://%s/images/json?all=1' % (each_host,)
-
-            # 添加host时收集host信息
-            try:
-                host_info = urllib.urlopen(host_url).read()
-                host_info_list = json.loads(host_info)
-                print '======'
-                print host_info, host_info_list, type(host_info), type(host_info_list)
-                print '======='
-                if isinstance(host_info_list, dict):
-                    host_result = 'success'
-                    container_number = host_info_list['Containers']
-                    image_number = host_info_list['Images']
-
-                    Host.objects.filter(ip=str(each_host)).update(container_number=container_number,
-                                                                  image_number=image_number,
-                                                                  info=host_info_list)
-                else:
-                    host_result = 'error'
-                    Host.objects.filter(ip=str(each_host)).update(info=host_result)
+        print u'并发执行开始', time.strftime('%H:%M:%S', time.localtime())
+        before = time.time()
+        pool = Pool()
+        for each in all_host:
+            res.append(pool.apply_async(Dashbord.do, args=(each, )))
+        pool.close()
+        pool.join()
+        for a in res:
+            print a.get()
+        print u'并发执行结束', time.strftime('%H:%M:%S', time.localtime())
+        after = time.time()
+        use = after-before
+        print u'耗时 ', use
+        return JsonResponse('aaa', safe=False)
 
 
-                # 添加host时收集container信息
-                container_info = urllib.urlopen(container_url).read()
-                container_info_list = json.loads(container_info)
+class PullImageView(View):
+    def get(self, request):
+        all_info = Image.objects.all()
+        all_host = Host.objects.all().distinct()
 
-                if isinstance(container_info_list, list):
-                    container_result = 'success'
-                    for each_container in container_info_list:
-                        # print each_container
-                        container_id = each_container['Id']
-                        container_name = each_container['Names'][0].replace('/', '')
-                        container_imagename = each_container['Image']
-                        container_imageid = each_container['ImageID'].split(":")[-1]
-                        container_host = Host.objects.get(ip=str(each_host))
-                        container_create_time = date_serilazer.convert(request, each_container['Created'])
-                        container_state = each_container['State']
+        return render(request, 'image.html', {'all_info': all_info, 'all_host': all_host})
 
-                        print '------container------\n', container_id, container_name, container_imagename, container_imageid, container_host, container_create_time, container_state
-                        if not Container.objects.filter(container_id=container_id):
-                            Container.objects.create(container_id=container_id, name=container_name,
-                                                     imagename=container_imagename, imageid=container_imageid,
-                                                     host=container_host, create_time=container_create_time,
-                                                     state=container_state)
-                        else:
-                            Container.objects.filter(container_id=container_id).update(name=container_name,
-                                                                                       imagename=container_imagename,
-                                                                                       imageid=container_imageid,
-                                                                                       host=container_host,
-                                                                                       create_time=container_create_time,
-                                                                                       state=container_state)
+    def post(self, request, ip):
+        imagename = request.POST.get('imagename', '')
+        url = 'http://%s/images/create?fromImage=%s&tag=%s' % (ip, imagename, 'latest')
+        image_url = 'http://%s/images/json?all=1' % (ip,)
 
-                elif isinstance(container_info_list, dict):
-                    container_result = container_info_list['message']
+        try:
+            response = requests.post(url)
 
-                # 添加host时，收集image信息
-                image_info = urllib.urlopen(image_url).read()
-                image_info_list = json.loads(image_info)
+            print type(response), response.status_code
 
-                if isinstance(image_info_list, list):
-                    image_result = 'success'
+            if response.status_code == 200:
+                if not 'error' in response.text:
+                    result = 'success'
+                    image_info = urllib.urlopen(image_url).read()
+                    image_info_list = json.loads(image_info)
+
                     for each_image in image_info_list:
-                        # print each_image
-                        image_id = each_image['Id'].split(":")[-1]
-                        print image_id
                         image_repository = each_image['RepoTags'][0].split("/")[-1].split(":")[0]
-                        image_host = Host.objects.get(ip=str(each_host))
-                        image_create_time = date_serilazer.convert(request, each_image['Created'])
-                        image_size = each_image['Size']
-                        image_container_number = Container.objects.filter(imageid=image_id).count()
+                        if image_repository == imagename:
+                            image_id = each_image['Id'].split(":")[-1]
+                            image_host = Host.objects.get(ip=ip)
+                            image_create_time = data_serilazer.convert(each_image['Created'])
+                            image_size = each_image['Size']
+                            image_container_number = Container.objects.filter(Q(imageid=image_id) & Q(host=ip)).count()
 
-                        if not Image.objects.filter(image_id=image_id):
-                            Image.objects.create(image_id=image_id, repository=image_repository,
-                                                 host=image_host, create_time=image_create_time,
-                                                 container_number=image_container_number, size=image_size)
-                        else:
-                            Image.objects.filter(image_id=image_id).update(host=image_host,
-                                                                           create_time=image_create_time,
-                                                                           container_number=image_container_number,
-                                                                           size=image_size)
+                            if not Image.objects.filter(Q(repository=imagename) & Q(host=ip)):
+                                Image.objects.create(image_id=image_id, repository=image_repository,
+                                                     host=image_host, create_time=image_create_time,
+                                                     container_number=image_container_number, size=image_size)
 
-                elif isinstance(image_info_list, dict):
-                    image_result = image_info_list['message']
+                                number_image = Host.objects.get(ip=ip)
+                                number_image.image_number += 1
+                                number_image.save()
+                                break
+                            else:
+                                result = 'error'
+                else:
+                    result = 'error'
+            else:
+                result = 'error'
 
-                # if host_result == 'success' and container_result == 'success' and image_result == 'success':
-                #     result = 'success'
-                # else:
-                #     result = 'error'
-            except Exception:
-                fail_host += 1
-                Host.objects.filter(ip=str(each_host)).update(info='unreachable')
+            return JsonResponse(result, safe=False)
 
-        # return render(request, 'host.html', {'result': result})]
-        res = {'host_result': host_result,
-               'container_result': container_result,
-               'image_result': image_result,
-               'host_number': host_number,
-               'fail_host': fail_host}
+        except Exception as e:
+            result = e
 
-        return JsonResponse(res, safe=False)
+            return JsonResponse(result, safe=False)
+
+
+class DeleteImageView(View):
+    def get(self, request):
+        all_info = Image.objects.all()
+        all_host = Host.objects.all().distinct()
+
+        return render(request, 'image.html', {'all_info': all_info, 'all_host': all_host})
+
+    def post(self, request, ip):
+        imageid = request.POST.get('image_id', '')
+        url = 'http://%s/images/%s' % (ip, imageid)
+
+        try:
+            response = requests.delete(url)
+
+            if response.status_code == 200:
+                if not 'error' in response.text:
+                    delete_status = 'success'
+
+                    Image.objects.filter(Q(host=ip) & Q(image_id=imageid)).delete()
+                    number_image = Host.objects.get(ip=ip)
+                    number_image.image_number -= 1
+                    number_image.save()
+
+            else:
+                delete_status = 'error'
+
+            return JsonResponse(delete_status, safe=False)
+
+        except Exception as e:
+            delete_status = e
+            return JsonResponse(delete_status, safe=False)
